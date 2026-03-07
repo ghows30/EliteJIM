@@ -1,0 +1,102 @@
+.history-main {
+  padding-bottom: 90px;
+}
+
+.empty-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.history-card {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.history-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.25rem;
+}
+
+.history-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.delete-btn {
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.delete-btn:hover {
+  color: var(--error-color);
+  background-color: rgba(255, 69, 58, 0.1);
+}
+
+.history-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--surface-color-elevated);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.history-exercises {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-ex-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.h-ex-name {
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.h-ex-details {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
