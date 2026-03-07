@@ -28,6 +28,7 @@ export const useStore = create(
           exercises: template ? template.exercises.map(ex => ({
             id: Date.now() + Math.random(),
             name: ex.name,
+            restTime: ex.restTime || 60,
             sets: Array.from({ length: ex.setsCount }, (_, i) => ({
               id: Date.now() + i,
               kg: '',
@@ -61,6 +62,7 @@ export const useStore = create(
           const newExercise = {
             id: Date.now(),
             name,
+            restTime: 60, // default
             sets: [{ id: Date.now() + 1, kg: '', reps: '', targetReps: '', done: false }]
           };
           return {

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Plus, Trash2, ArrowLeft, Save } from 'lucide-react';
+import { ExerciseAutocomplete } from '../components/ExerciseAutocomplete';
 import './TemplateBuilder.css';
 
 function TemplateBuilder() {
@@ -12,7 +13,7 @@ function TemplateBuilder() {
   const [exercises, setExercises] = useState([]);
 
   const handleAddExercise = () => {
-    setExercises([...exercises, { id: Date.now(), name: '', setsCount: 3, targetReps: '8-10' }]);
+    setExercises([...exercises, { id: Date.now(), name: '', setsCount: 3, targetReps: '8-10', restTime: 60 }]);
   };
 
   const handleUpdateExercise = (id, field, value) => {
@@ -68,13 +69,12 @@ function TemplateBuilder() {
             <div key={ex.id} className="builder-exercise-card">
               <div className="ex-card-header">
                 <span className="ex-number">{idx + 1}</span>
-                <input 
-                  type="text" 
-                  className="ex-name-input" 
-                  placeholder="Nome Esercizio" 
-                  value={ex.name}
-                  onChange={(e) => handleUpdateExercise(ex.id, 'name', e.target.value)}
-                />
+                <div style={{ flex: 1 }}>
+                  <ExerciseAutocomplete 
+                    value={ex.name}
+                    onChange={(val) => handleUpdateExercise(ex.id, 'name', val)}
+                  />
+                </div>
                 <button className="remove-btn" onClick={() => handleRemoveExercise(ex.id)}>
                   <Trash2 size={20} />
                 </button>
@@ -97,6 +97,16 @@ function TemplateBuilder() {
                     placeholder="Es. 8-10" 
                     value={ex.targetReps}
                     onChange={(e) => handleUpdateExercise(ex.id, 'targetReps', e.target.value)}
+                  />
+                </div>
+                <div className="detail-group" style={{ gridColumn: '1 / -1' }}>
+                  <label>Recupero (secondi)</label>
+                  <input 
+                    type="number" 
+                    min="0"
+                    step="15"
+                    value={ex.restTime !== undefined ? ex.restTime : 60}
+                    onChange={(e) => handleUpdateExercise(ex.id, 'restTime', e.target.value === '' ? '' : parseInt(e.target.value))}
                   />
                 </div>
               </div>

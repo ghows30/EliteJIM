@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Check, Play, Pause, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { ExerciseAutocomplete } from '../components/ExerciseAutocomplete';
+import { requestNotificationPermission, notifyTimerComplete } from '../utils/notifications';
 import './Workout.css';
 
 function Workout() {
@@ -18,6 +20,11 @@ function Workout() {
   // Rest Timer State
   const [restTimeLeft, setRestTimeLeft] = useState(0);
   const [isResting, setIsResting] = useState(false);
+
+  // Ask for notification permission when they start a workout
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
 
   // General session timer
   useEffect(() => {
@@ -38,8 +45,7 @@ function Workout() {
       setRestTimeLeft(prev => {
         if (prev <= 1) {
           setIsResting(false);
-          // Optional: Vibrate or play sound here
-          if("vibrate" in navigator) navigator.vibrate(1000);
+          notifyTimerComplete(); // Web Audio Beep + Push Notification
           return 0;
         }
         return prev - 1;
@@ -63,8 +69,12 @@ function Workout() {
     
     // Start rest timer automatically if just finished a set
     if (isNowDone) {
-      setRestTimeLeft(90); // Default 90 seconds
-      setIsResting(true);
+      const exercise = activeWorkout.exercises.find(ex => ex.id === exerciseId);
+      const restSeconds = exercise && exercise.restTime !== undefined && exercise.restTime !== '' ? parseInt(exercise.restTime) : 60;
+      if (restSeconds > 0) {
+        setRestTimeLeft(restSeconds);
+        setIsResting(true);
+      }
     }
   };
 
@@ -87,6 +97,24 @@ function Workout() {
     const s = String(seconds % 60).padStart(2, '0');
     return `${m}:${s}`;
   };
+
+  // We need a helper to update the *name* of an exercise in the active workout
+  // This requires a new store action, but for now we can rely on a local workaround,
+  // or better, update the store. We'll add the store logic in a separate step or just 
+  // bypass it if it's already in the template. If it's a new exercise, we want to name it.
+  const handleUpdateExerciseNameLocally = (exerciseId, newName) => {
+      useStore.setState(state => {
+          if (!state.activeWorkout) return state;
+          return {
+              activeWorkout: {
+                  ...state.activeWorkout,
+                  exercises: state.activeWorkout.exercises.map(ex => 
+                      ex.id === exerciseId ? { ...ex, name: newName } : ex
+                  )
+              }
+          }
+      })
+  }
 
   return (
     <div className="workout-container">
@@ -117,10 +145,17 @@ function Workout() {
         {activeWorkout.exercises.map((ex, exIdx) => (
           <div key={ex.id} className="exercise-card">
             <div className="exercise-header">
-              <h3>{exIdx + 1}. {ex.name || 'Nuovo Esercizio'}</h3>
+              <span className="ex-number" style={{display:'inline-flex', marginRight: '8px', verticalAlign:'middle'}}>{exIdx + 1}</span>
+              <div style={{ display: 'inline-block', width: 'calc(100% - 40px)', verticalAlign:'middle' }}>
+                <ExerciseAutocomplete 
+                  value={ex.name}
+                  onChange={(val) => handleUpdateExerciseNameLocally(ex.id, val)}
+                  placeholder="Seleziona Esercizio"
+                />
+              </div>
             </div>
             
-            <div className="sets-header">
+            <div className="sets-header" style={{marginTop:'12px'}}>
               <span>Set</span>
               <span>kg</span>
               <span>Reps</span>
@@ -155,7 +190,7 @@ function Workout() {
         ))}
 
         <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-          <button className="add-exercise-btn" style={{ flex: 1 }} onClick={() => addExercise('Esercizio Extra')}>
+          <button className="add-exercise-btn" style={{ flex: 1 }} onClick={() => addExercise('')}>
             <Plus size={20} /> Esercizio
           </button>
           <button 
