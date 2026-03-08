@@ -29,7 +29,7 @@ export const useStore = create(
             id: Date.now() + Math.random(),
             name: ex.name,
             restTime: ex.restTime || 60,
-            sets: Array.from({ length: ex.setsCount }, (_, i) => ({
+            sets: Array.from({ length: parseInt(ex.setsCount) || 1 }, (_, i) => ({
               id: Date.now() + i,
               kg: '',
               reps: '',

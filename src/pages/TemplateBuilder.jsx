@@ -8,7 +8,7 @@ import './TemplateBuilder.css';
 function TemplateBuilder() {
   const navigate = useNavigate();
   const addTemplate = useStore(state => state.addTemplate);
-  
+
   const [name, setName] = useState('');
   const [exercises, setExercises] = useState([]);
 
@@ -33,7 +33,7 @@ function TemplateBuilder() {
       alert("Aggiungi almeno un esercizio!");
       return;
     }
-    
+
     // Validate exercise names
     if (exercises.some(ex => !ex.name.trim())) {
       alert("Tutti gli esercizi devono avere un nome.");
@@ -51,13 +51,13 @@ function TemplateBuilder() {
         <h2>Nuova Scheda</h2>
         <button className="icon-btn save-btn" onClick={handleSave}><Save size={24} /></button>
       </header>
-      
+
       <main className="builder-content">
         <div className="input-group">
           <label>Nome Scheda</label>
-          <input 
-            type="text" 
-            placeholder="Es. Spinta - Giorno A" 
+          <input
+            type="text"
+            placeholder="Es. Spinta - Giorno A"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -70,7 +70,7 @@ function TemplateBuilder() {
               <div className="ex-card-header">
                 <span className="ex-number">{idx + 1}</span>
                 <div style={{ flex: 1 }}>
-                  <ExerciseAutocomplete 
+                  <ExerciseAutocomplete
                     value={ex.name}
                     onChange={(val) => handleUpdateExercise(ex.id, 'name', val)}
                   />
@@ -79,34 +79,41 @@ function TemplateBuilder() {
                   <Trash2 size={20} />
                 </button>
               </div>
-              
+
               <div className="ex-card-details">
                 <div className="detail-group">
                   <label>Serie</label>
-                  <input 
-                    type="number" 
-                    min="1" 
-                    value={ex.setsCount}
-                    onChange={(e) => handleUpdateExercise(ex.id, 'setsCount', parseInt(e.target.value) || 1)}
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={ex.setsCount !== undefined ? ex.setsCount : ''}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      handleUpdateExercise(ex.id, 'setsCount', val === '' ? '' : parseInt(val, 10));
+                    }}
                   />
                 </div>
                 <div className="detail-group">
                   <label>Reps Target</label>
-                  <input 
-                    type="text" 
-                    placeholder="Es. 8-10" 
+                  <input
+                    type="text"
+                    placeholder="Es. 8-10"
                     value={ex.targetReps}
                     onChange={(e) => handleUpdateExercise(ex.id, 'targetReps', e.target.value)}
                   />
                 </div>
                 <div className="detail-group" style={{ gridColumn: '1 / -1' }}>
                   <label>Recupero (secondi)</label>
-                  <input 
-                    type="number" 
-                    min="0"
-                    step="15"
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={ex.restTime !== undefined ? ex.restTime : 60}
-                    onChange={(e) => handleUpdateExercise(ex.id, 'restTime', e.target.value === '' ? '' : parseInt(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      handleUpdateExercise(ex.id, 'restTime', val === '' ? '' : parseInt(val, 10));
+                    }}
                   />
                 </div>
               </div>
