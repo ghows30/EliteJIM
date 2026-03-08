@@ -83,16 +83,32 @@ function TemplateBuilder() {
               <div className="ex-card-details">
                 <div className="detail-group">
                   <label>Serie</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={ex.setsCount !== undefined ? ex.setsCount : ''}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/[^0-9]/g, '');
-                      handleUpdateExercise(ex.id, 'setsCount', val === '' ? '' : parseInt(val, 10));
-                    }}
-                  />
+                  <div className="number-input-group">
+                    <button 
+                      type="button" 
+                      className="num-btn"
+                      onClick={() => handleUpdateExercise(ex.id, 'setsCount', Math.max(1, (parseInt(ex.setsCount) || 1) - 1))}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={ex.setsCount !== undefined ? ex.setsCount : ''}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '');
+                        handleUpdateExercise(ex.id, 'setsCount', val === '' ? '' : parseInt(val, 10));
+                      }}
+                    />
+                    <button 
+                      type="button" 
+                      className="num-btn"
+                      onClick={() => handleUpdateExercise(ex.id, 'setsCount', (parseInt(ex.setsCount) || 0) + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
                 <div className="detail-group">
                   <label>Reps Target</label>
@@ -105,16 +121,32 @@ function TemplateBuilder() {
                 </div>
                 <div className="detail-group" style={{ gridColumn: '1 / -1' }}>
                   <label>Recupero (secondi)</label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={ex.restTime !== undefined ? ex.restTime : 60}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/[^0-9]/g, '');
-                      handleUpdateExercise(ex.id, 'restTime', val === '' ? '' : parseInt(val, 10));
-                    }}
-                  />
+                  <div className="number-input-group">
+                    <button 
+                      type="button" 
+                      className="num-btn"
+                      onClick={() => handleUpdateExercise(ex.id, 'restTime', Math.max(0, (parseInt(ex.restTime) || 0) - 15))}
+                    >
+                      -
+                    </button>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={ex.restTime !== undefined ? ex.restTime : 0}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9]/g, '');
+                        handleUpdateExercise(ex.id, 'restTime', val === '' ? '' : parseInt(val, 10));
+                      }}
+                    />
+                    <button 
+                      type="button" 
+                      className="num-btn"
+                      onClick={() => handleUpdateExercise(ex.id, 'restTime', (parseInt(ex.restTime) || 0) + 15)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
