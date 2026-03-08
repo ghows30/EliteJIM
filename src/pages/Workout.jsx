@@ -165,18 +165,59 @@ function Workout() {
             {ex.sets.map((set, setIdx) => (
               <div key={set.id} className={`set-row ${set.done ? 'done' : ''}`}>
                 <div className="set-number">{setIdx + 1}</div>
-                <input 
-                  type="number" 
-                  placeholder="-" 
-                  value={set.kg || ''} 
-                  onChange={(e) => updateSet(ex.id, set.id, 'kg', e.target.value)}
-                />
-                <input 
-                  type="number" 
-                  placeholder={set.targetReps || "-"} 
-                  value={set.reps || ''} 
-                  onChange={(e) => updateSet(ex.id, set.id, 'reps', e.target.value)}
-                />
+                <div className="workout-input-group">
+                  <button 
+                    className="workout-num-btn"
+                    onClick={() => {
+                      const currentVal = parseFloat(set.kg) || 0;
+                      updateSet(ex.id, set.id, 'kg', Math.max(0, currentVal - 1.25).toString());
+                    }}
+                  >-</button>
+                  <input 
+                    type="text" 
+                    inputMode="decimal"
+                    placeholder="-" 
+                    value={set.kg || ''} 
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9.]/g, '');
+                      updateSet(ex.id, set.id, 'kg', val);
+                    }}
+                  />
+                  <button 
+                    className="workout-num-btn"
+                    onClick={() => {
+                      const currentVal = parseFloat(set.kg) || 0;
+                      updateSet(ex.id, set.id, 'kg', (currentVal + 1.25).toString());
+                    }}
+                  >+</button>
+                </div>
+                <div className="workout-input-group">
+                  <button 
+                    className="workout-num-btn"
+                    onClick={() => {
+                      const currentVal = parseFloat(set.reps) || 0;
+                      updateSet(ex.id, set.id, 'reps', Math.max(0, currentVal - 1).toString());
+                    }}
+                  >-</button>
+                  <input 
+                    type="text" 
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder={set.targetReps || "-"} 
+                    value={set.reps || ''} 
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, '');
+                      updateSet(ex.id, set.id, 'reps', val);
+                    }}
+                  />
+                  <button 
+                    className="workout-num-btn"
+                    onClick={() => {
+                      const currentVal = parseFloat(set.reps) || 0;
+                      updateSet(ex.id, set.id, 'reps', (currentVal + 1).toString());
+                    }}
+                  >+</button>
+                </div>
                 <button 
                   className={`check-btn ${set.done ? 'checked' : ''}`}
                   onClick={() => handleToggleSet(ex.id, set.id, set.done)}
