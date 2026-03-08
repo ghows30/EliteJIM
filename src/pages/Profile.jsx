@@ -76,14 +76,14 @@ function Profile() {
               style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: 'var(--surface-color-elevated)', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}
               onClick={handleExport}
             >
-              <Download size={20} /> Esporta
+              <Upload size={20} /> Esporta
             </button>
             
             <button 
               style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               onClick={() => fileInputRef.current?.click()}
             >
-              <Upload size={20} /> Importa
+              <Download size={20} /> Importa
             </button>
             <input 
               type="file" 
