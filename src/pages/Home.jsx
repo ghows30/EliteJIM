@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Plus, Play } from 'lucide-react';
+import pkg from '../../package.json';
 
 function Home() {
   const navigate = useNavigate();
@@ -84,6 +85,10 @@ function Home() {
           >
             Inizia Vuoto
           </button>
+        </div>
+        
+        <div style={{ textAlign: 'center', marginTop: '2rem', paddingBottom: '1rem' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>v{pkg.version}</span>
         </div>
       </main>
     </>
