@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { EXERCISE_CATEGORIES, EXERCISES_DB } from '../data/exercises';
-import { CATEGORY_ICON_MAP } from '../components/MuscleIcons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './ProgressOverload.css';
 
@@ -127,14 +126,12 @@ function ProgressOverload() {
                         Tutti
                     </button>
                     {categories.map(({ key, label }) => {
-                        const IconComponent = CATEGORY_ICON_MAP[key];
                         return (
                             <button
                                 key={key}
                                 className={`muscle-chip ${selectedCategory === key ? 'active' : ''}`}
                                 onClick={() => setSelectedCategory(selectedCategory === key ? null : key)}
                             >
-                                {IconComponent && <IconComponent size={16} />}
                                 <span>{label}</span>
                             </button>
                         );
