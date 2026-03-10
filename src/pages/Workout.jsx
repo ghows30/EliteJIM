@@ -233,7 +233,8 @@ function Workout() {
               <span>Set</span>
               <span>kg</span>
               <span>Reps</span>
-              <span><Check size={16} /></span>
+              <span>RPE</span>
+              <span></span>
             </div>
 
             {ex.sets.map((set, setIdx) => (
@@ -294,7 +295,28 @@ function Workout() {
                     }}
                   >+</button>
                 </div>
-                <button
+                {set.done ? (
+                  <div className={`fatigue-display ${set.fatigue || 'default'}`}>
+                    <div className="fatigue-dot"></div>
+                  </div>
+                ) : (
+                  <div className="fatigue-selector">
+                    <button 
+                      className={`fatigue-btn green ${set.fatigue === 'green' ? 'active' : ''}`}
+                      onClick={() => updateSet(ex.id, set.id, 'fatigue', 'green')}
+                    />
+                    <button 
+                      className={`fatigue-btn yellow ${set.fatigue === 'yellow' ? 'active' : ''}`}
+                      onClick={() => updateSet(ex.id, set.id, 'fatigue', 'yellow')}
+                    />
+                    <button 
+                      className={`fatigue-btn red ${set.fatigue === 'red' ? 'active' : ''}`}
+                      onClick={() => updateSet(ex.id, set.id, 'fatigue', 'red')}
+                    />
+                  </div>
+                )}
+                
+                <button 
                   className={`check-btn ${set.done ? 'checked' : ''}`}
                   onClick={() => handleToggleSet(ex.id, set.id, set.done)}
                 >
