@@ -65,12 +65,14 @@ function ProgressOverload() {
 
             let setsCount = doneSets.length;
             let max1RM = 0;
+            let maxReps = 0;
 
             doneSets.forEach(s => {
                 const w = parseFloat(s.kg) || 0;
                 const r = parseInt(s.reps, 10) || 0;
                 const rm = calculateOneRepMax(w, r);
                 if (rm > max1RM) max1RM = rm;
+                if (r > maxReps) maxReps = r;
             });
 
             const d = new Date(workout.startTime);
@@ -80,7 +82,8 @@ function ProgressOverload() {
                 date: shortDate,
                 timestamp: workout.startTime,
                 setsCount,
-                oneRepMax: parseFloat(max1RM.toFixed(1))
+                oneRepMax: parseFloat(max1RM.toFixed(1)),
+                maxReps
             });
         });
 
@@ -89,10 +92,17 @@ function ProgressOverload() {
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
+            const data = payload[0].payload;
+            const showsReps = data.oneRepMax === 0 && data.maxReps > 0;
+
             return (
                 <div className="custom-tooltip">
                     <p className="label">{label}</p>
-                    <p className="desc">{`1RM Est: ${payload[0].value} kg`}</p>
+                    {showsReps ? (
+                        <p className="desc">{`Max Reps: ${data.maxReps}`}</p>
+                    ) : (
+                        <p className="desc">{`1RM Est: ${data.oneRepMax} kg`}</p>
+                    )}
                     {payload[1] && <p className="desc-volume">{`Serie: ${payload[1].value}`}</p>}
                 </div>
             );
