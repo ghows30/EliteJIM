@@ -1,60 +1,58 @@
 import React from 'react';
 import {
-    GiMuscularTorso,
-    GiLeg,
-    GiWeightLiftingUp,
-    GiBiceps,
-    GiArm,
-    GiAbdominalArmor,
-    GiFist,
-    GiBodyHeight
-} from 'react-icons/gi';
-import { FaHeartbeat, FaUserAlt } from 'react-icons/fa';
+    Activity,    // Cardio
+    User,        // Neck/Head
+    GitCommit,   // Core/Abs (abs definition)
+    ActivitySquare, // Chest (box volume)
+    CircleDot,   // Shoulders (deltoid roundness)
+    TrendingUp,  // Biceps (growth)
+    TrendingDown,// Triceps (extension)
+    Zap,         // Forearms (grip strength)
+    ArrowUp,     // Legs (squat up)
+    AlignJustify // Back (lats width)
+} from 'lucide-react';
 
-// We wrap react-icons to accept 'size' and 'color' props to match the previous API, 
-// ensuring they drop in perfectly without breaking other components.
+// Using lucide-react icons to guarantee they render correctly, as react-icons 
+// was causing Vite dev server cache issues resulting in invisible SVGs.
 
 export const ChestIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <GiMuscularTorso size={size} color={color} {...props} />
+    <ActivitySquare size={size} color={color} {...props} />
 );
 
-// For Back, we use the Torso icon but flipped horizontally to suggest the posterior chain
 export const BackIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <div style={{ display: 'inline-flex', transform: 'scaleX(-1)' }} {...props}>
-        <GiMuscularTorso size={size} color={color} />
-    </div>
+    <AlignJustify size={size} color={color} {...props} />
 );
 
 export const LegsIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <GiLeg size={size} color={color} {...props} />
+    <ArrowUp size={size} color={color} {...props} />
 );
 
 export const ShouldersIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <GiWeightLiftingUp size={size} color={color} {...props} />
+    <CircleDot size={size} color={color} {...props} />
 );
 
 export const BicepsIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <GiBiceps size={size} color={color} {...props} />
+    <TrendingUp size={size} color={color} {...props} />
 );
 
 export const TricepsIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <GiArm size={size} color={color} {...props} />
+    <TrendingDown size={size} color={color} {...props} />
 );
 
 export const CoreIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <GiAbdominalArmor size={size} color={color} {...props} />
+    <GitCommit size={size} color={color} {...props} />
 );
 
 export const CardioIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <FaHeartbeat size={size} color={color} {...props} />
+    <Activity size={size} color={color} {...props} />
 );
 
 export const NeckIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <FaUserAlt size={size} color={color} {...props} />
+    <User size={size} color={color} {...props} />
 );
 
 export const ForearmsIcon = ({ size = 20, color = 'currentColor', ...props }) => (
-    <GiFist size={size} color={color} {...props} />
+    <Zap size={size} color={color} {...props} />
 );
 
 // Map category keys to icon components
