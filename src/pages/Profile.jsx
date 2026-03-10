@@ -6,7 +6,7 @@ import './Profile.css';
 
 function Profile() {
   const fileInputRef = useRef(null);
-  
+
   const handleExport = () => {
     // Get the current state from LocalStorage directly, since Zustand persists it there under 'elitejim-storage'
     const data = localStorage.getItem('elitejim-storage');
@@ -14,7 +14,7 @@ function Profile() {
       alert("Nessun dato trovato da esportare.");
       return;
     }
-    
+
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -34,16 +34,16 @@ function Profile() {
         const content = e.target.result;
         // Basic validation: ensure it's a valid JSON object
         const parsed = JSON.parse(content);
-        
+
         if (!parsed.state) {
-            alert("Il file non sembra essere un backup di EliteJIM valido.");
-            return;
+          alert("Il file non sembra essere un backup di EliteJIM valido.");
+          return;
         }
 
         if (window.confirm("Attenzione: Importare questo file sovrascriverà tutte le tue schede e la cronologia attuali. Sei sicuro di voler procedere?")) {
           // Restore to local storage
           localStorage.setItem('elitejim-storage', JSON.stringify(parsed));
-          
+
           // Force Zustand to re-hydrate from the newly set localStorage
           // The easiest way for a PWA is simply a page reload
           window.location.reload();
@@ -53,7 +53,7 @@ function Profile() {
       }
     };
     reader.readAsText(file);
-    
+
     // Reset file input
     event.target.value = '';
   };
@@ -150,7 +150,7 @@ function Profile() {
         <h1>Profilo</h1>
         <p className="subtitle">Gestione Dati</p>
       </header>
-      
+
       <main className="app-main">
         {/* --- Charts Section --- */}
         <section className="profile-section">
@@ -158,16 +158,16 @@ function Profile() {
             <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <TrendingUp size={20} color="var(--primary-color)" /> Progressive Overload
             </h2>
-            
+
             {uniqueExercises.length === 0 ? (
               <div className="no-data-msg">
                 Nessun dato relativo ad esercizi completati.
               </div>
             ) : (
               <>
-                <select 
+                <select
                   className="exercise-selector"
-                  value={selectedExercise} 
+                  value={selectedExercise}
                   onChange={(e) => setSelectedExercise(e.target.value)}
                 >
                   {uniqueExercises.map(ex => (
@@ -179,36 +179,36 @@ function Profile() {
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                      <XAxis 
-                        dataKey="date" 
-                        stroke="var(--text-muted)" 
-                        fontSize={12} 
-                        tickMargin={10} 
+                      <XAxis
+                        dataKey="date"
+                        stroke="var(--text-muted)"
+                        fontSize={12}
+                        tickMargin={10}
                         axisLine={false}
                         tickLine={false}
                       />
-                      <YAxis 
-                        stroke="var(--text-muted)" 
-                        fontSize={12} 
-                        axisLine={false} 
+                      <YAxis
+                        stroke="var(--text-muted)"
+                        fontSize={12}
+                        axisLine={false}
                         tickLine={false}
                         domain={['auto', 'auto']}
                       />
                       <Tooltip content={<CustomTooltip />} />
-                      <Line 
-                        type="monotone" 
-                        dataKey="oneRepMax" 
+                      <Line
+                        type="monotone"
+                        dataKey="oneRepMax"
                         name="1RM Est."
-                        stroke="var(--primary-color)" 
+                        stroke="var(--primary-color)"
                         strokeWidth={3}
                         dot={{ r: 4, strokeWidth: 2 }}
                         activeDot={{ r: 6 }}
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="volume" 
+                      <Line
+                        type="monotone"
+                        dataKey="volume"
                         name="Volume"
-                        stroke="var(--accent-color)" 
+                        stroke="var(--accent-color)"
                         strokeWidth={2}
                         strokeDasharray="4 4"
                         dot={false}
@@ -220,34 +220,35 @@ function Profile() {
               </>
             )}
           </div>
+        </section>
 
-          {/* --- Backup Section --- */}
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Backup Dati</h2>
+        {/* --- Backup Section --- */}
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <h2 style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Backup Dati</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.4 }}>
-            Le tue schede e le tue statistiche sono salvate localmente sul tuo dispositivo. 
+            Le tue schede e le tue statistiche sono salvate localmente sul tuo dispositivo.
             Puoi esportarle per salvarle in sicurezza o trasferirle su un altro telefono.
           </p>
-          
+
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-            <button 
+            <button
               style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', backgroundColor: 'var(--surface-color-elevated)', border: '1px solid var(--border-color)', color: 'var(--text-main)' }}
               onClick={handleExport}
             >
               <Upload size={20} /> Esporta
             </button>
-            
-            <button 
+
+            <button
               style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               onClick={() => fileInputRef.current?.click()}
             >
               <Download size={20} /> Importa
             </button>
-            <input 
-              type="file" 
-              accept=".json" 
-              ref={fileInputRef} 
-              style={{ display: 'none' }} 
+            <input
+              type="file"
+              accept=".json"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
               onChange={handleImport}
             />
           </div>
