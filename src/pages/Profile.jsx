@@ -87,6 +87,66 @@ function Profile() {
     return w * (1 + r / 30);
   };
 
+  const loadTestData = () => {
+    if (!window.confirm("Attenzione: questo sovrascriverà il tuo storico attuale con dati di test. Sei sicuro?")) return;
+
+    const now = Date.now();
+    const day = 24 * 60 * 60 * 1000;
+
+    // Generate 12 workouts over the last 30 days
+    const mockHistory = Array.from({ length: 12 }).map((_, i) => {
+      const workoutTime = now - (30 - i * 2.5) * day; // Every ~2-3 days
+      const progressFactor = i * 2.5; // Progressively heavier weights
+
+      return {
+        id: `mock-w-${i}`,
+        name: i % 2 === 0 ? 'Push Day' : 'Pull Day',
+        startTime: workoutTime,
+        endTime: workoutTime + 60 * 60 * 1000, // 1 hour later
+        exercises: i % 2 === 0 ? [
+          {
+            id: `mock-ex-1-${i}`,
+            name: 'Panca Piana Bilanciere',
+            sets: [
+              { id: 1, kg: String(60 + progressFactor), reps: '8', done: true, fatigue: 'yellow' },
+              { id: 2, kg: String(60 + progressFactor), reps: '8', done: true, fatigue: 'yellow' },
+              { id: 3, kg: String(60 + progressFactor), reps: '7', done: true, fatigue: 'red' }
+            ]
+          },
+          {
+            id: `mock-ex-2-${i}`,
+            name: 'Spinte Manubri Seduto',
+            sets: [
+              { id: 1, kg: String(20 + progressFactor / 2), reps: '10', done: true, fatigue: 'yellow' },
+              { id: 2, kg: String(20 + progressFactor / 2), reps: '9', done: true, fatigue: 'red' }
+            ]
+          }
+        ] : [
+          {
+            id: `mock-ex-3-${i}`,
+            name: 'Trazioni alla Sbarra (Pull-up)',
+            sets: [
+              { id: 1, kg: '0', reps: String(Math.floor(5 + i / 2)), done: true, fatigue: 'yellow' },
+              { id: 2, kg: '0', reps: String(Math.floor(4 + i / 2)), done: true, fatigue: 'red' }
+            ]
+          },
+          {
+            id: `mock-ex-4-${i}`,
+            name: 'Curl Bilanciere',
+            sets: [
+              { id: 1, kg: String(30 + progressFactor / 2), reps: '10', done: true, fatigue: 'green' },
+              { id: 2, kg: String(30 + progressFactor / 2), reps: '10', done: true, fatigue: 'yellow' },
+              { id: 3, kg: String(32.5 + progressFactor / 2), reps: '8', done: true, fatigue: 'red' }
+            ]
+          }
+        ]
+      };
+    });
+
+    useStore.setState({ history: mockHistory.reverse() });
+    alert("Dati di test caricati con successo!");
+  };
+
   return (
     <>
       <header className="app-header">
@@ -124,6 +184,15 @@ function Profile() {
               style={{ display: 'none' }}
               onChange={handleImport}
             />
+          </div>
+
+          <div style={{ marginTop: '0.5rem', borderTop: '1px dashed var(--border-color)', paddingTop: '1rem' }}>
+            <button
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--surface-color-elevated)', border: '1px solid var(--primary-color)', color: 'var(--primary-color)' }}
+              onClick={loadTestData}
+            >
+              Carica Dati di Test (Per Sviluppo)
+            </button>
           </div>
         </div>
 
