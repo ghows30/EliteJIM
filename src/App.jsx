@@ -7,6 +7,7 @@ import History from './pages/History';
 import Profile from './pages/Profile';
 import TemplateBuilder from './pages/TemplateBuilder';
 import ReloadPrompt from './components/ReloadPrompt';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import './App.css';
 
 function Navigation() {
@@ -45,6 +46,7 @@ function App() {
           <Route path="/build" element={<TemplateBuilder />} />
         </Routes>
         <Navigation />
+        <SpeedInsights />
       </div>
     </BrowserRouter>
   );

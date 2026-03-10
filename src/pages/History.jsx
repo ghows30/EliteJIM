@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Calendar, Clock, Dumbbell, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Dumbbell, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import './History.css';
 
 function History() {
   const history = useStore(state => state.history);
   // Optional: add a delete history record function to the store
   const setStore = useStore.setState;
+  const [expandedSessions, setExpandedSessions] = useState({});
 
-  const handleDelete = (id) => {
+  const toggleSession = (id) => {
+    setExpandedSessions(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
+  const handleDelete = (e, id) => {
+    e.stopPropagation();
     if (window.confirm("Sei sicuro di voler eliminare questo allenamento dallo storico?")) {
       setStore(state => ({
         history: state.history.filter(w => w.id !== id)
@@ -39,18 +48,6 @@ function History() {
     return `${diff} min`;
   };
 
-  const calculateTotalVolume = (exercises) => {
-    let vol = 0;
-    exercises.forEach(ex => {
-      ex.sets.forEach(set => {
-        if (set.done && set.kg && set.reps) {
-          vol += (parseFloat(set.kg) * parseInt(set.reps));
-        }
-      });
-    });
-    return vol;
-  };
-
   const calculateCompletedSets = (exercises) => {
     let sets = 0;
     exercises.forEach(ex => {
@@ -75,8 +72,10 @@ function History() {
           </div>
         ) : (
           <div className="history-list">
-            {history.map(workout => (
-              <div key={workout.id} className="history-card">
+            {history.map(workout => {
+              const isExpanded = expandedSessions[workout.id];
+              return (
+              <div key={workout.id} className="history-card" onClick={() => toggleSession(workout.id)} style={{ cursor: 'pointer' }}>
                 <div className="history-header">
                   <div>
                     <h3 className="history-title">{workout.name}</h3>
@@ -84,8 +83,8 @@ function History() {
                       <Calendar size={14} /> {formatDate(workout.startTime)} alle {formatTime(workout.startTime)}
                     </div>
                   </div>
-                  <button className="icon-btn-small delete-btn" onClick={() => handleDelete(workout.id)}>
-                    <Trash2 size={18} />
+                  <button className="icon-btn-small delete-btn" onClick={(e) => handleDelete(e, workout.id)} style={{ padding: '4px', margin: '-8px -8px 0 0' }}>
+                    <Trash2 size={14} />
                   </button>
                 </div>
 
@@ -94,12 +93,11 @@ function History() {
                     <Clock size={16} />
                     <span>{formatDuration(workout.startTime, workout.endTime)}</span>
                   </div>
-                  <div className="stat-pill">
-                    <Dumbbell size={16} />
-                    <span>{calculateTotalVolume(workout.exercises)} kg vol.</span>
-                  </div>
                   <div className="stat-pill" style={{backgroundColor: 'var(--success-color-dim)', color: 'var(--success-color)'}}>
                     <span>{calculateCompletedSets(workout.exercises)} Set</span>
+                  </div>
+                  <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>
+                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
                 </div>
 
@@ -109,17 +107,29 @@ function History() {
                     if (doneSets.length === 0) return null; // Skip if no set was marked as done
                     
                     return (
-                      <div key={ex.id} className="history-ex-row">
-                        <span className="h-ex-name">{exIdx + 1}. {ex.name}</span>
-                        <span className="h-ex-details">
-                          {doneSets.length} set completati
-                        </span>
+                      <div key={ex.id} className="history-ex-container">
+                        <div className="history-ex-row">
+                          <span className="h-ex-name">{exIdx + 1}. {ex.name}</span>
+                          <span className="h-ex-details">
+                            {doneSets.length} set completati
+                          </span>
+                        </div>
+                        {isExpanded && (
+                          <div className="history-ex-sets">
+                            {doneSets.map((set, setIdx) => (
+                              <div key={set.id} className="history-set-row">
+                                <span className="set-number">Set {setIdx + 1}</span>
+                                <span className="set-data">{set.kg} kg × {set.reps} reps</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )}
       </main>

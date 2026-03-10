@@ -32,10 +32,11 @@
 }
 
 .history-title {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--text-main);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.01em;
 }
 
 .history-date {
@@ -45,11 +46,20 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   text-transform: capitalize;
+  font-weight: 400;
 }
 
 .delete-btn {
   color: var(--text-muted);
   background: transparent;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .delete-btn:hover {
@@ -69,11 +79,12 @@
   align-items: center;
   gap: 6px;
   background-color: var(--surface-color-elevated);
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--primary-color);
+  letter-spacing: 0.01em;
 }
 
 .history-exercises {
@@ -84,6 +95,12 @@
   gap: 8px;
 }
 
+.history-ex-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .history-ex-row {
   display: flex;
   justify-content: space-between;
@@ -91,12 +108,42 @@
   font-size: 0.9rem;
 }
 
-.h-ex-name {
+.history-ex-sets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 1rem;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  border-left: 2px solid var(--border-color);
+}
+
+.history-set-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 2px 0;
+}
+
+.set-number {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.set-data {
   color: var(--text-main);
   font-weight: 500;
+}
+
+.h-ex-name {
+  color: var(--text-main);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .h-ex-details {
   color: var(--text-muted);
   font-size: 0.85rem;
+  font-weight: 400;
 }
