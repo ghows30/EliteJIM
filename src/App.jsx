@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Workout from './pages/Workout';
 import ProgressOverload from './pages/ProgressOverload';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import TemplateBuilder from './pages/TemplateBuilder';
 import ReloadPrompt from './components/ReloadPrompt';
 import { SpeedInsights } from '@vercel/speed-insights/react';
@@ -12,8 +13,8 @@ import './App.css';
 
 function Navigation() {
   const location = useLocation();
-  // Hide bottom nav on active workout session and template builder
-  if (location.pathname === '/workout' || location.pathname === '/build') return null;
+  // Hide bottom nav on active workout session, template builder and settings
+  if (['/workout', '/build', '/settings'].includes(location.pathname)) return null;
 
   return (
     <nav className="bottom-nav">
@@ -43,6 +44,7 @@ function App() {
           <Route path="/workout" element={<Workout />} />
           <Route path="/progress" element={<ProgressOverload />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/build" element={<TemplateBuilder />} />
         </Routes>
         <Navigation />

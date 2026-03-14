@@ -1,10 +1,12 @@
 import React, { useRef, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { Download, Upload, Calendar, Clock, Dumbbell, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { Download, Upload, Calendar, Clock, Dumbbell, ChevronDown, ChevronUp, User, Settings as SettingsIcon } from 'lucide-react';
 import { SwipeToDelete } from '../components/SwipeToDelete';
 import './Profile.css';
 
 function Profile() {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const history = useStore(state => state.history);
   const deleteWorkout = useStore(state => state.deleteWorkout);
@@ -209,6 +211,13 @@ function Profile() {
   return (
     <>
       <header className="app-header profile-header">
+        <button 
+          className="icon-btn settings-btn" 
+          onClick={() => navigate('/settings')}
+          style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', color: '#fff', zIndex: 10 }}
+        >
+          <SettingsIcon size={24} />
+        </button>
         <div className="header-content">
           <h1>Profilo</h1>
           <p className="subtitle">{welcomePhrase}</p>

@@ -7,11 +7,14 @@ import './ProgressOverload.css';
 
 function ProgressOverload() {
     const history = useStore(state => state.history);
+    const customExercises = useStore(state => state.customExercises || []);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedExercise, setSelectedExercise] = useState('');
 
     // Get all categories as an array of { key, label }
     const categories = Object.entries(EXERCISE_CATEGORIES).map(([key, label]) => ({ key, label }));
+
+    const allExercisesDB = useMemo(() => [...EXERCISES_DB, ...customExercises], [customExercises]);
 
     // Extract unique exercises from history, optionally filtered by category
     const availableExercises = useMemo(() => {
@@ -29,14 +32,14 @@ function ProgressOverload() {
         // Filter by selected muscle group
         if (selectedCategory) {
             const categoryLabel = EXERCISE_CATEGORIES[selectedCategory];
-            const categoryExNames = EXERCISES_DB
+            const categoryExNames = allExercisesDB
                 .filter(e => e.category === categoryLabel)
                 .map(e => e.name);
             arr = arr.filter(name => categoryExNames.includes(name));
         }
 
         return arr.sort();
-    }, [history, selectedCategory]);
+    }, [history, selectedCategory, allExercisesDB]);
 
     // Auto-select first exercise when filter changes
     useMemo(() => {

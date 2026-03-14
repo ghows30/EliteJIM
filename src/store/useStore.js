@@ -8,8 +8,16 @@ export const useStore = create(
       templates: [],
       // Array of completed workouts
       history: [],
+      // Array of custom exercises created by user
+      customExercises: [],
       // Currently active workout session
       activeWorkout: null,
+
+      // --- Custom Exercises Actions ---
+      addCustomExercise: (exercise) =>
+        set((state) => ({ customExercises: [...(state.customExercises || []), { ...exercise, id: `custom-${Date.now()}` }] })),
+      removeCustomExercise: (id) =>
+        set((state) => ({ customExercises: (state.customExercises || []).filter((ex) => ex.id !== id) })),
 
       // --- Template Actions ---
       addTemplate: (template) =>
