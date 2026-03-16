@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Check, Play, Pause, X } from 'lucide-react';
+import { Plus, Check, Play, Pause, X, ChevronLeft } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { ExerciseAutocomplete } from '../components/ExerciseAutocomplete';
 import { SwipeToDelete } from '../components/SwipeToDelete';
@@ -171,7 +171,22 @@ function Workout() {
   return (
     <div className="workout-container">
       <header className="workout-header">
-        <div className="workout-timer">{sessionTime}</div>
+        <button 
+          onClick={() => navigate('/')} 
+          style={{ 
+            background: 'none', 
+            border: 'none', 
+            color: 'var(--text-main)', 
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            cursor: 'pointer'
+          }}
+          aria-label="Torna alla Home"
+        >
+          <ChevronLeft size={28} />
+        </button>
+        <div className="workout-timer" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>{sessionTime}</div>
         <button className="finish-btn" onClick={handleFinishWorkout}>Termina</button>
       </header>
 

@@ -69,10 +69,12 @@ function ProgressOverload() {
             let setsCount = doneSets.length;
             let max1RM = 0;
             let maxReps = 0;
+            let tonnage = 0;
 
             doneSets.forEach(s => {
                 const w = parseFloat(s.kg) || 0;
                 const r = parseInt(s.reps, 10) || 0;
+                tonnage += (w * r);
                 const rm = calculateOneRepMax(w, r);
                 if (rm > max1RM) max1RM = rm;
                 if (r > maxReps) maxReps = r;
@@ -86,7 +88,8 @@ function ProgressOverload() {
                 timestamp: workout.startTime,
                 setsCount,
                 oneRepMax: parseFloat(max1RM.toFixed(1)),
-                maxReps
+                maxReps,
+                tonnage: parseFloat(tonnage.toFixed(1))
             });
         });
 
@@ -100,16 +103,26 @@ function ProgressOverload() {
         const pb = validPRs.length > 0 ? Math.max(...validPRs) : 0;
         const last1RM = chartData[chartData.length - 1].oneRepMax;
         
-        let progressPercent = 0;
-        if (validPRs.length >= 2) {
-            const first1RM = validPRs[0];
-            progressPercent = ((pb - first1RM) / first1RM) * 100;
+        let volumeProgress = { text: '0%', isPositive: true };
+        const lastTonnage = chartData[chartData.length - 1].tonnage;
+
+        if (chartData.length >= 2) {
+            const prevTonnage = chartData[chartData.length - 2].tonnage;
+            if (prevTonnage > 0) {
+                const diff = lastTonnage - prevTonnage;
+                const percent = (diff / prevTonnage) * 100;
+                volumeProgress = {
+                    text: `${percent > 0 ? '+' : ''}${percent.toFixed(1)}%`,
+                    isPositive: percent >= 0
+                };
+            }
         }
 
         return {
             pb: pb > 0 ? `${pb}kg` : chartData[chartData.length - 1].maxReps + ' reps',
             last: last1RM > 0 ? `${last1RM}kg` : '-',
-            progress: progressPercent > 0 ? `+${progressPercent.toFixed(1)}%` : '0%'
+            volume: lastTonnage > 0 ? `${lastTonnage}kg` : '0kg',
+            volumeProgress
         };
     }, [chartData]);
 
@@ -133,8 +146,14 @@ function ProgressOverload() {
                                 <span className="val">1RM Est: {data.oneRepMax}kg</span>
                             </div>
                         )}
+                        {data.tonnage > 0 && (
+                            <div className="tooltip-row">
+                                <span className="dot volume" style={{ backgroundColor: 'var(--accent-color)' }}></span>
+                                <span className="val">Volume: {data.tonnage}kg</span>
+                            </div>
+                        )}
                         <div className="tooltip-row">
-                            <span className="dot volume"></span>
+                            <span className="dot sets" style={{ backgroundColor: 'var(--text-muted)' }}></span>
                             <span className="val">Serie: {data.setsCount}</span>
                         </div>
                     </div>
@@ -201,8 +220,19 @@ function ProgressOverload() {
                                     <span className="insight-value">{insights.last}</span>
                                 </div>
                                 <div className="insight-card">
-                                    <span className="insight-label">Progresso Tot.</span>
-                                    <span className="insight-value success">{insights.progress}</span>
+                                    <span className="insight-label">Volume (Trend)</span>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                                        <span className="insight-value">{insights.volume}</span>
+                                        {insights.volume !== '0kg' && (
+                                            <span style={{ 
+                                                fontSize: '0.8rem', 
+                                                fontWeight: '600',
+                                                color: insights.volumeProgress.isPositive ? 'var(--success-color)' : 'var(--error-color)' 
+                                            }}>
+                                                {insights.volumeProgress.text}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         )}
