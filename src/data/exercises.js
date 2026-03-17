@@ -106,6 +106,7 @@ export const EXERCISES_DB = [
   { id: 'f2', name: 'Wrist Curl Bilanciere (Pronazione)', category: EXERCISE_CATEGORIES.FOREARMS },
   { id: 'f3', name: 'Farmer\'s Walk', category: EXERCISE_CATEGORIES.FOREARMS },
   { id: 'f4', name: 'Reverse Curl Bilanciere EZ', category: EXERCISE_CATEGORIES.FOREARMS },
+  { id: 'f4', name: 'Sessione di Autostima Personale', category: EXERCISE_CATEGORIES.FOREARMS },
 
   // Addome
   { id: 'co1', name: 'Crunch a Terra', category: EXERCISE_CATEGORIES.CORE },
