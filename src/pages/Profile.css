@@ -7,10 +7,10 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem 1.5rem 5rem !important;
   background: #000;
   overflow: hidden;
   border-bottom: none;
+  margin-bottom: 32px;
 }
 
 /* Mesh Gradient Background */
@@ -22,15 +22,20 @@
   width: 200%;
   height: 200%;
   background: radial-gradient(circle at 30% 30%, rgba(var(--primary-color-rgb), 0.4) 0%, transparent 50%),
-              radial-gradient(circle at 70% 60%, rgba(245, 93, 62, 0.3) 0%, transparent 50%);
+    radial-gradient(circle at 70% 60%, rgba(245, 93, 62, 0.3) 0%, transparent 50%);
   animation: mesh-rotate 20s linear infinite;
   z-index: 0;
   filter: blur(40px);
 }
 
 @keyframes mesh-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .btn-show-more:hover {
@@ -42,6 +47,7 @@
 .btn-show-more:active {
   transform: translateY(0);
 }
+
 .app-container .header-content {
   position: relative;
   z-index: 2;
@@ -157,7 +163,7 @@
   background: rgba(var(--primary-color-rgb), 0.05);
   border-left-color: var(--primary-color);
   border-color: rgba(var(--primary-color-rgb), 0.2);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .workout-title {
@@ -247,9 +253,9 @@
 
 /* Sync Card */
 .data-management.data-management {
-  background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
   border-style: solid;
-  border-color: rgba(255,255,255,0.1);
+  border-color: rgba(255, 255, 255, 0.1);
   padding: 2rem;
   margin-bottom: 2rem;
 }
