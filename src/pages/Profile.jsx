@@ -10,6 +10,12 @@ import './Profile.css';
 
 function Profile() {
   const navigate = useNavigate();
+  const history = useStore(state => state.history);
+  const scienceReport = useStore(state => state.scienceReport);
+  const deleteWorkout = useStore(state => state.deleteWorkout);
+  const userXP = useStore(state => state.userXP);
+  const currentStreak = useStore(state => state.currentStreak);
+  const muscleXP = useStore(state => state.muscleXP) || {};
   const showScience = useStore(state => state.showScience);
 
   const [expandedSessions, setExpandedSessions] = useState({});
