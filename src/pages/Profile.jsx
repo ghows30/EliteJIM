@@ -17,6 +17,7 @@ function Profile() {
   const userXP = useStore(state => state.userXP);
   const currentStreak = useStore(state => state.currentStreak);
   const muscleXP = useStore(state => state.muscleXP) || {};
+  const showScience = useStore(state => state.showScience);
 
   const [expandedSessions, setExpandedSessions] = useState({});
   const [visibleWeeks, setVisibleWeeks] = useState(2);
@@ -455,31 +456,33 @@ function Profile() {
         </div>
 
         {/* Muscle Levels Button */}
-        <div style={{ marginTop: '2.5rem', marginBottom: '1rem' }}>
-          <button
-            onClick={() => navigate('/levels')}
-            className="btn-primary"
-            style={{
-              width: '100%',
-              padding: '1.2rem',
-              fontSize: '1.2rem',
-              background: 'linear-gradient(135deg, #ffcc00 0%, #ff9500 100%)',
-              color: 'black',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '12px',
-              boxShadow: '0 8px 32px rgba(255,204,0,0.3)'
-            }}
-          >
-            <Zap size={24} color="black" fill="black" />
-            <span style={{ fontWeight: '800' }}>I Tuoi Livelli Muscolari</span>
-          </button>
-        </div>
+        {showScience && (
+          <div style={{ marginTop: '2.5rem', marginBottom: '1rem' }}>
+            <button
+              onClick={() => navigate('/levels')}
+              className="btn-primary"
+              style={{
+                width: '100%',
+                padding: '1.2rem',
+                fontSize: '1.2rem',
+                background: 'linear-gradient(135deg, #ffcc00 0%, #ff9500 100%)',
+                color: 'black',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+                boxShadow: '0 8px 32px rgba(255,204,0,0.3)'
+              }}
+            >
+              <Zap size={24} color="black" fill="black" />
+              <span style={{ fontWeight: '800' }}>I Tuoi Livelli Muscolari</span>
+            </button>
+          </div>
+        )}
 
 
         {/* Science Mesocycle Sync Section */}
-        {scienceGoals && (
+        {showScience && scienceGoals && (
           <div style={{ marginTop: '2rem' }}>
             <div className="section-header" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <Target size={24} color="var(--primary-color)" />
@@ -540,7 +543,7 @@ function Profile() {
         )}
 
         {/* RP Volume Section */}
-        {rpVolumes && (
+        {showScience && rpVolumes && (
           <div style={{ marginTop: '2rem' }}>
             <div className="section-header" style={{ marginBottom: '1.5rem' }}>
               <h2 className="section-title-premium">

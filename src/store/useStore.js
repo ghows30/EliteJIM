@@ -57,6 +57,7 @@ export const useStore = create(
       highestStreak: 0,
       lastWorkoutDate: null,
       recapData: null,
+      showScience: true,
 
       // --- Gamification Actions ---
       clearRecapData: () => set({ recapData: null }),
@@ -77,6 +78,7 @@ export const useStore = create(
 
       // --- Science Actions ---
       saveScienceReport: (report) => set({ scienceReport: report }),
+      toggleScience: () => set((state) => ({ showScience: !state.showScience })),
       
       // --- Custom Exercises Actions ---
       addCustomExercise: (exercise) =>

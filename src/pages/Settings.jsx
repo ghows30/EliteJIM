@@ -1,146 +1,91 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { ArrowLeft, Plus, Search, Trash2, Dumbbell } from 'lucide-react';
-import { EXERCISE_CATEGORIES, EXERCISES_DB, getExerciseCategories } from '../data/exercises';
-import { SwipeToDelete } from '../components/SwipeToDelete';
+import { ArrowLeft, ChevronRight, Dumbbell, Dna, Info } from 'lucide-react';
 import './Settings.css';
 
 function Settings() {
   const navigate = useNavigate();
-  const customExercises = useStore(state => state.customExercises || []);
-  const addCustomExercise = useStore(state => state.addCustomExercise);
-  const removeCustomExercise = useStore(state => state.removeCustomExercise);
-
-  const [searchTerm, setSearchTerm] = useState('');
-  const [newExName, setNewExName] = useState('');
-  const [newExCategory, setNewExCategory] = useState(EXERCISE_CATEGORIES.CHEST);
-  const [isAdding, setIsAdding] = useState(false);
-
-  // Combine default and custom exercises
-  const allExercises = [...EXERCISES_DB, ...customExercises];
-
-  // Filter based on search term
-  const filteredExercises = allExercises.filter(ex => {
-    const categories = getExerciseCategories(ex);
-    const categoryMatch = categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()));
-    return ex.name.toLowerCase().includes(searchTerm.toLowerCase()) || categoryMatch;
-  });
-
-  // Group by category — exercises appear in every group they belong to
-  const groupedTasks = Object.values(EXERCISE_CATEGORIES).reduce((acc, cat) => {
-    acc[cat] = filteredExercises.filter(e => getExerciseCategories(e).includes(cat));
-    return acc;
-  }, {});
-
-  const handleAdd = () => {
-    if (!newExName.trim()) {
-      alert("Inserisci un nome per l'esercizio");
-      return;
-    }
-    // Check if exists
-    if (allExercises.some(e => e.name.toLowerCase() === newExName.toLowerCase())) {
-      alert("Questo esercizio esiste già nel database!");
-      return;
-    }
-
-    addCustomExercise({ name: newExName.trim(), category: newExCategory, isCustom: true });
-    setNewExName('');
-    setIsAdding(false);
-  };
+  const showScience = useStore(state => state.showScience);
+  const toggleScience = useStore(state => state.toggleScience);
 
   return (
     <div className="settings-container">
       <header className="settings-header">
-        <button className="icon-btn" onClick={() => navigate(-1)}><ArrowLeft size={24} /></button>
-        <h2>Database Esercizi</h2>
-        <div style={{ width: 44 }}></div> {/* Balance spacer */}
+        <button className="icon-btn" style={{ background: 'transparent', border: 'none' }} onClick={() => navigate(-1)}><ArrowLeft size={24} /></button>
+        <h2>Impostazioni</h2>
+        <div style={{ width: 44 }}></div>
       </header>
 
-      <main className="settings-content">
-        <div className="search-bar-container">
-          <Search size={20} className="search-icon" />
-          <input 
-            type="text" 
-            placeholder="Cerca esercizio o categoria..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
-
-        <div className="add-exercise-section">
-          {!isAdding ? (
-            <button className="btn-add-exercise" onClick={() => setIsAdding(true)}>
-              <Plus size={20} /> Nuovo Esercizio Personalizzato
-            </button>
-          ) : (
-            <div className="add-exercise-form">
-              <h3>Aggiungi Esercizio</h3>
-              <div className="form-group">
-                <label>Nome Esercizio</label>
-                <input 
-                  type="text" 
-                  placeholder="Es. Panca Piana Manubri 30°" 
-                  value={newExName}
-                  onChange={(e) => setNewExName(e.target.value)}
-                  autoFocus
-                />
+      <main className="settings-content" style={{ marginTop: '0.5rem' }}>
+        <div className="settings-group">
+          <div 
+            className="settings-item clickable" 
+            onClick={() => navigate('/settings/exercises')}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '1.25rem', background: 'rgba(255,255,255,0.03)',
+              borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)',
+              marginBottom: '1rem', cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ background: 'rgba(var(--primary-color-rgb), 0.1)', padding: '8px', borderRadius: '10px' }}>
+                <Dumbbell size={20} color="var(--primary-color)" />
               </div>
-              <div className="form-group">
-                <label>Gruppo Muscolare</label>
-                <select 
-                  value={newExCategory} 
-                  onChange={(e) => setNewExCategory(e.target.value)}
-                >
-                  {Object.values(EXERCISE_CATEGORIES).map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-actions">
-                <button className="btn-cancel" onClick={() => setIsAdding(false)}>Annulla</button>
-                <button className="btn-save" onClick={handleAdd}>Salva</button>
+              <div>
+                <p style={{ margin: 0, fontWeight: '700', color: '#fff' }}>Database Esercizi</p>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>Gestisci esercizi e gruppi muscolari</p>
               </div>
             </div>
-          )}
+            <ChevronRight size={18} color="var(--text-muted)" />
+          </div>
+
+          <div 
+            className="settings-item" 
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '1.25rem', background: 'rgba(255,255,255,0.03)',
+              borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)',
+              marginBottom: '1rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ background: 'rgba(255, 45, 85, 0.1)', padding: '8px', borderRadius: '10px' }}>
+                <Dna size={20} color="#ff2d55" />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontWeight: '700', color: '#fff' }}>Sezione Scienza</p>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>Abilita tracker e obiettivi mesociclo</p>
+              </div>
+            </div>
+            <div 
+              onClick={toggleScience}
+              style={{
+                width: '50px', height: '28px', 
+                background: showScience ? 'var(--primary-color)' : 'rgba(255,255,255,0.1)',
+                borderRadius: '20px', position: 'relative', cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+            >
+              <div style={{
+                width: '22px', height: '22px', background: '#fff',
+                borderRadius: '50%', position: 'absolute', top: '3px',
+                left: showScience ? '25px' : '3px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }} />
+            </div>
+          </div>
         </div>
 
-        <div className="exercises-catalog">
-          {Object.entries(groupedTasks).map(([category, exercises]) => {
-            if (exercises.length === 0) return null;
-            return (
-              <div key={category} className="category-group">
-                <h3 className="category-title">{category} <span className="category-count">{exercises.length}</span></h3>
-                <div className="category-list">
-                  {exercises.map(ex => (
-                    ex.isCustom ? (
-                      <SwipeToDelete key={ex.id} onDelete={() => {
-                        if (window.confirm(`Sei sicuro di voler eliminare ${ex.name}?`)) {
-                          removeCustomExercise(ex.id);
-                        }
-                      }}>
-                        <div className="ex-list-item custom-ex">
-                          <div className="ex-info">
-                            <Dumbbell size={16} className="ex-icon" />
-                            <span>{ex.name}</span>
-                          </div>
-                          <span className="badge-custom">Custom</span>
-                        </div>
-                      </SwipeToDelete>
-                    ) : (
-                      <div key={ex.id} className="ex-list-item">
-                        <div className="ex-info">
-                          <div className="ex-dot"></div>
-                          <span>{ex.name}</span>
-                        </div>
-                      </div>
-                    )
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+        <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginTop: '2rem' }}>
+          <p style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.8rem', margin: '0 0 8px' }}>
+            <Info size={16} /> Info
+          </p>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            Disattivando la Sezione Scienza, verranno nascosti i tracker del mesociclo e i landmark di Mike Israetel per un'esperienza di tracciamento più semplice.
+          </p>
         </div>
       </main>
     </div>

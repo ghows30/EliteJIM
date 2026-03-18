@@ -7,6 +7,7 @@ import ProgressOverload from './pages/ProgressOverload';
 import Science from './pages/Science';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import Exercises from './pages/Exercises';
 import TemplateBuilder from './pages/TemplateBuilder';
 import WorkoutRecap from './pages/WorkoutRecap';
 import MuscleLevels from './pages/MuscleLevels';
@@ -17,8 +18,9 @@ import './App.css';
 
 function Navigation() {
   const location = useLocation();
+  const showScience = useStore(state => state.showScience);
   // Hide bottom nav on active workout session, template builder, settings, recap, and levels
-  if (['/workout', '/build', '/settings', '/recap', '/levels'].includes(location.pathname)) return null;
+  if (['/workout', '/build', '/settings', '/recap', '/levels', '/settings/exercises'].includes(location.pathname)) return null;
 
   return (
     <nav className="bottom-nav">
@@ -30,10 +32,12 @@ function Navigation() {
         <TrendingUp size={24} />
         <span>Progressi</span>
       </NavLink>
-      <NavLink to="/science" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-        <Dna size={24} />
-        <span>Scienza</span>
-      </NavLink>
+      {showScience && (
+        <NavLink to="/science" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+          <Dna size={24} />
+          <span>Scienza</span>
+        </NavLink>
+      )}
       <NavLink to="/profile" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
         <User size={24} />
         <span>Profilo</span>
@@ -55,6 +59,7 @@ function App() {
           <Route path="/science" element={<Science />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/exercises" element={<Exercises />} />
           <Route path="/build" element={<TemplateBuilder />} />
           <Route path="/recap" element={<WorkoutRecap />} />
           <Route path="/levels" element={<MuscleLevels />} />

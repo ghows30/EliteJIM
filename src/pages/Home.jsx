@@ -26,6 +26,7 @@ function Home() {
   const lastWorkoutDate = useStore(state => state.lastWorkoutDate);
   const userXP = useStore(state => state.userXP) || 0;
   const currentStreak = useStore(state => state.currentStreak) || 0;
+  const showScience = useStore(state => state.showScience);
 
   const [showWelcome, setShowWelcome] = useState(false);
 
@@ -153,7 +154,7 @@ function Home() {
         )}
 
         {/* ── TRACKER SETTIMANALE ──────────────────────── */}
-        {trackerData && (
+        {showScience && trackerData && (
           <div className="glass" style={{
             borderRadius: '24px', padding: '1.5rem',
             marginBottom: '0.5rem'
