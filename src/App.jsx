@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { Home as HomeIcon, TrendingUp, User, Dna } from 'lucide-react';
+import { useStore } from './store/useStore';
 import Home from './pages/Home';
 import Workout from './pages/Workout';
 import ProgressOverload from './pages/ProgressOverload';
