@@ -13,7 +13,8 @@ const RP_BASE_LANDMARKS = {
   'Spalle': { mev: 8, mav: 12, mrv: 22 },
   'Bicipiti': { mev: 8, mav: 10, mrv: 20 },
   'Tricipiti': { mev: 6, mav: 10, mrv: 18 },
-  'Polpacci': { mev: 8, mav: 12, mrv: 20 }
+  'Polpacci': { mev: 8, mav: 12, mrv: 20 },
+  'Addome': { mev: 8, mav: 12, mrv: 20 }
 };
 
 const MUSCLE_GROUPS = Object.keys(RP_BASE_LANDMARKS);

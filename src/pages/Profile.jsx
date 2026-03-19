@@ -158,15 +158,18 @@ function Profile() {
     // Gather sets done THIS week
     const setsDoneThisWeek = {};
     history.forEach(w => {
-      if (w.startTime >= startOfCurrentWeek) {
+      // Force Number conversion for robust comparison
+      if (Number(w.startTime) >= startOfCurrentWeek) {
         w.exercises.forEach(ex => {
           const allKnown = [...EXERCISES_DB, ...customExercises];
-          const foundEx = allKnown.find(e => normalizeName(e.name) === normalizeName(ex.name));
+          const normalizedExName = normalizeName(ex.name);
+          const foundEx = allKnown.find(e => normalizeName(e.name) === normalizedExName);
           const muscles = foundEx ? getExerciseCategories(foundEx) : [];
           
           muscles.forEach(muscle => {
             if (muscle && scienceReport.baseLandmarks[muscle]) {
-              setsDoneThisWeek[muscle] = (setsDoneThisWeek[muscle] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
+              const count = ex.sets.filter(s => s.done && !s.isDropset).length;
+              setsDoneThisWeek[muscle] = (setsDoneThisWeek[muscle] || 0) + count;
             }
           });
         });

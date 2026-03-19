@@ -147,14 +147,23 @@ function Workout() {
         </div>
 
         {/* Termina — fixed width */}
-        <button onClick={handleFinishWorkout} style={{
-          flexShrink: 0,
-          background: 'linear-gradient(135deg, #00b8d4 0%, #0090b0 100%)',
-          border: 'none', borderRadius: '10px', padding: '9px 16px',
-          color: 'white', fontWeight: '800', fontSize: '0.88rem',
-          boxShadow: '0 4px 14px rgba(0,184,212,0.3)', width: 'auto'
-        }}>
-          Termina
+        <button 
+          onClick={handleFinishWorkout} 
+          style={{
+            flexShrink: 0,
+            background: 'linear-gradient(135deg, #00b8d4 0%, #00e5ff 100%)',
+            border: 'none',
+            borderRadius: '10px',
+            padding: '8px 16px',
+            color: 'white',
+            fontSize: '0.85rem',
+            fontWeight: '800',
+            boxShadow: '0 4px 12px rgba(0,184,212,0.3)',
+            cursor: 'pointer',
+            zIndex: 110
+          }}
+        >
+          TERMINA
         </button>
       </div>
 

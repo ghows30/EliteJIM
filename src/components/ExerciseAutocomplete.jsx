@@ -26,12 +26,18 @@ export function ExerciseAutocomplete({ value, onChange, placeholder = "Cerca ese
 
   const sourceData = options || [...EXERCISES_DB, ...customExercises];
 
+  console.log(`[DEBUG] Autocomplete searchTerm: "${searchTerm}", sourceData length: ${sourceData?.length}`);
   const filteredExercises = sourceData.filter(ex => {
     const name = typeof ex === 'string' ? ex : ex.name;
     const categories = typeof ex === 'string' ? [] : getExerciseCategories(ex);
-    const categoryMatch = categories.some(cat => cat.toLowerCase().includes(searchTerm.toLowerCase()));
-    return name.toLowerCase().includes(searchTerm.toLowerCase()) || categoryMatch;
+    
+    const searchLow = searchTerm.toLowerCase().trim();
+    const nameMatch = name.toLowerCase().includes(searchLow);
+    const categoryMatch = categories.some(cat => cat.toLowerCase().includes(searchLow));
+    
+    return nameMatch || categoryMatch;
   });
+  console.log(`[DEBUG] Autocomplete filtered: ${filteredExercises.length}`);
 
   return (
     <div ref={wrapperRef} className="autocomplete-wrapper">
