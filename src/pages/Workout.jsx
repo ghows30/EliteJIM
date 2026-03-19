@@ -5,6 +5,7 @@ import { useStore } from '../store/useStore';
 import { ExerciseAutocomplete } from '../components/ExerciseAutocomplete';
 import { SwipeToDelete } from '../components/SwipeToDelete';
 import { requestNotificationPermission, notifyTimerComplete } from '../utils/notifications';
+import { normalizeName } from '../data/exercises';
 
 function Workout() {
   const navigate = useNavigate();
@@ -82,8 +83,8 @@ function Workout() {
   const handleUpdateExerciseNameLocally = (exerciseId, newName) => {
     useStore.setState(state => {
       if (!state.activeWorkout) return state;
-      const pastWk = state.history.find(w => w.exercises.some(e => e.name === newName));
-      const pastEx = pastWk?.exercises.find(e => e.name === newName);
+      const pastWk = state.history.find(w => w.exercises.some(e => normalizeName(e.name) === normalizeName(newName)));
+      const pastEx = pastWk?.exercises.find(e => normalizeName(e.name) === normalizeName(newName));
       return {
         activeWorkout: {
           ...state.activeWorkout,

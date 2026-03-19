@@ -4,7 +4,7 @@ import { useStore } from '../store/useStore';
 import { Calendar, Clock, Dumbbell, ChevronDown, ChevronUp, User, Settings as SettingsIcon, Target, Zap, Edit2, Trash2, X, Flame, Trophy, Check } from 'lucide-react';
 import { SwipeToDelete } from '../components/SwipeToDelete';
 import { calculateLast7DaysVolume, getVolumeStatus, RP_LANDMARKS } from '../utils/rpVolume';
-import { EXERCISES_DB, EXERCISE_CATEGORIES, getExerciseCategories } from '../data/exercises';
+import { EXERCISES_DB, getExerciseCategories, normalizeName } from '../data/exercises';
 import { getRankByXp } from '../utils/gamification';
 import './Profile.css';
 
@@ -161,7 +161,7 @@ function Profile() {
       if (w.startTime >= startOfCurrentWeek) {
         w.exercises.forEach(ex => {
           const allKnown = [...EXERCISES_DB, ...customExercises];
-          const foundEx = allKnown.find(e => e.name.trim().toLowerCase() === ex.name.trim().toLowerCase());
+          const foundEx = allKnown.find(e => normalizeName(e.name) === normalizeName(ex.name));
           const muscles = foundEx ? getExerciseCategories(foundEx) : [];
           
           muscles.forEach(muscle => {

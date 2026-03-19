@@ -1,3 +1,5 @@
+import { normalizeName } from '../data/exercises';
+
 export const RP_LANDMARKS = {
   // Landmarks in number of sets per week
   Petto: { MEV: 10, MAV_MIN: 12, MAV_MAX: 20, MRV: 22 },
@@ -30,7 +32,7 @@ export const calculateLast7DaysVolume = (history, exercisesDb) => {
     if (ex.secondaryCategories) {
       allCats.push(...ex.secondaryCategories);
     }
-    categoryMap[ex.name.trim().toLowerCase()] = allCats;
+    categoryMap[normalizeName(ex.name)] = allCats;
   });
 
   // Filter last 7 days workouts
@@ -38,7 +40,7 @@ export const calculateLast7DaysVolume = (history, exercisesDb) => {
 
   recentWorkouts.forEach(workout => {
     workout.exercises.forEach(ex => {
-      const categories = categoryMap[ex.name.trim().toLowerCase()];
+      const categories = categoryMap[normalizeName(ex.name)];
       if (categories) {
         // Count only completed sets, ignore dropsets for structural volume
         const completedSets = ex.sets.filter(s => s.done && !s.isDropset).length;

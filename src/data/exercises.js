@@ -16,6 +16,17 @@ export const EXERCISE_CATEGORIES = {
 };
 
 /**
+ * Normalizes an exercise name for consistent matching:
+ * - Lowercase
+ * - Trim leading/trailing whitespace
+ * - Replace multiple spaces with a single space
+ */
+export const normalizeName = (name) => {
+  if (!name) return '';
+  return name.toLowerCase().trim().replace(/\s+/g, ' ');
+};
+
+/**
  * Returns all categories for an exercise (primary + secondary).
  * Works with both DB exercises and custom exercises.
  */
