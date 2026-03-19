@@ -73,79 +73,8 @@ export const useStore = create(
       },
       syncGamificationWithHistory: () => {
         set((state) => {
-          const finalCustomExercises = (state.customExercises || []).map(ex => {
-            const lowName = ex.name.toLowerCase().trim();
-            const dbMatch = EXERCISES_DB.find(d => d.name.toLowerCase().trim() === lowName);
-            if (dbMatch && ex.category !== dbMatch.category) {
-              return { ...ex, category: dbMatch.category };
-            }
-            // Fix mislabeled shoulders "spinte", "alzate", etc.
-            const shoulderKeywords = ['spalle', 'shoulder', 'military', 'alzate', 'deltoidi'];
-            const isShoulderName = shoulderKeywords.some(k => lowName.includes(k)) || (lowName.includes('spinte') && (lowName.includes('seduto') || lowName.includes('manubri')));
-            
-            if (isShoulderName && (ex.category === 'Petto' || ex.category === 'Altro')) {
-              return { ...ex, category: 'Spalle' };
-            }
-            return ex;
-          });
-
-          const allKnownNames = new Set([
-            ...EXERCISES_DB.map(e => e.name.toLowerCase().trim()),
-            ...finalCustomExercises.map(e => e.name.toLowerCase().trim())
-          ]);
-          
-          const newCustomExercises = [...finalCustomExercises];
-          let discoveredAny = false;
-
-          state.history.forEach(workout => {
-            workout.exercises.forEach(ex => {
-              const searchName = (ex.name || "").toLowerCase().trim();
-              if (searchName && !allKnownNames.has(searchName)) {
-                // 1. Try to find a case-insensitive match in EXERCISES_DB first for best accuracy
-                const dbMatch = EXERCISES_DB.find(d => d.name.toLowerCase().trim() === searchName);
-                
-                let category = 'Altro';
-                if (dbMatch) {
-                  category = dbMatch.category;
-                } else {
-                  // 2. Infer category via keywords with improved prioritization
-                  const n = searchName;
-                  
-                  // Specific Shoulder keywords (PRIORITY)
-                  if (n.includes('spalle') || n.includes('shoulder') || n.includes('military') || n.includes('alzate') || n.includes('deltoidi') || (n.includes('spinte') && (n.includes('seduto') || n.includes('manubri')))) {
-                    category = 'Spalle';
-                  } 
-                  else if (n.includes('panca') || n.includes('petto') || n.includes('chest') || n.includes('spinte')) category = 'Petto';
-                  else if (n.includes('rematore') || n.includes('trazioni') || n.includes('dorso') || n.includes('lat') || n.includes('pulley')) category = 'Dorso';
-                  else if (n.includes('stacco') || n.includes('squat') || n.includes('gambe') || n.includes('pressa') || n.includes('leg')) category = 'Gambe';
-                  else if (n.includes('curl') || n.includes('bicipiti')) category = 'Bicipiti';
-                  else if (n.includes('frenck') || n.includes('tricipiti') || n.includes('pushdown')) category = 'Tricipiti';
-                  else if (n.includes('crunch') || n.includes('addome') || n.includes('plank')) category = 'Addome';
-                }
-
-                newCustomExercises.push({
-                  id: `custom-sync-${Date.now()}-${Math.random()}`,
-                  name: ex.name.trim(),
-                  category,
-                  isCustom: true
-                });
-                allKnownNames.add(searchName);
-                discoveredAny = true;
-              }
-            });
-          });
-
-          // 2. Recalculate stats with the (potentially updated) list
-          const finalExercises = [...EXERCISES_DB, ...newCustomExercises];
-          const { userXP, muscleXP, currentStreak, highestStreak } = recalculateTotalXpFromHistory(state.history, finalExercises);
-          
-          return { 
-            customExercises: newCustomExercises,
-            userXP, 
-            muscleXP, 
-            currentStreak, 
-            highestStreak 
-          };
+          const { userXP, muscleXP, currentStreak, highestStreak } = recalculateTotalXpFromHistory(state.history, [...EXERCISES_DB, ...(state.customExercises || [])]);
+          return { userXP, muscleXP, currentStreak, highestStreak };
         });
       },
 

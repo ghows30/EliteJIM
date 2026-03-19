@@ -52,24 +52,12 @@ function WorkoutRecap() {
     }
 
     // 1. Trova i muscoli allenati in QUESTA sessione
-    const customExercises = useStore.getState().customExercises || [];
-    const allEx = [...EXERCISES_DB, ...customExercises];
-
     const setsDoneInWorkout = {};
     recapData.workout.exercises.forEach(ex => {
-      const searchName = (ex.name || "").toLowerCase().trim();
-      const foundEx = allEx.find(e => e.name.toLowerCase().trim() === searchName);
-      const muscleCat = foundEx ? foundEx.category : null;
-      if (muscleCat) {
-        let normalized = muscleCat === 'Gambe' ? 'Quadricipiti' : muscleCat;
-        const scienceKey = Object.keys(scienceGoalsThisWeek.setsDoneBeforeWorkout).find(k => 
-          k.toLowerCase() === normalized.toLowerCase() ||
-          k.toLowerCase().includes(normalized.toLowerCase()) || 
-          normalized.toLowerCase().includes(k.toLowerCase())
-        );
-        if (scienceKey) {
-          setsDoneInWorkout[scienceKey] = (setsDoneInWorkout[scienceKey] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
-        }
+      const foundEx = EXERCISES_DB.find(e => e.name === ex.name);
+      const muscle = foundEx ? foundEx.category : null;
+      if (muscle) {
+        setsDoneInWorkout[muscle] = (setsDoneInWorkout[muscle] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
       }
     });
 
@@ -83,42 +71,27 @@ function WorkoutRecap() {
     history.forEach(w => {
       if (w.id !== recapData.workout.id && w.startTime >= startOfCurrentWeek) {
         w.exercises.forEach(ex => {
-          const searchName = (ex.name || "").toLowerCase().trim();
-          const foundEx = allEx.find(e => e.name.toLowerCase().trim() === searchName);
-          const muscleCat = foundEx ? foundEx.category : null;
-          if (muscleCat) {
-            let normalized = muscleCat === 'Gambe' ? 'Quadricipiti' : muscleCat;
-            const scienceKey = Object.keys(setsDoneBeforeWorkout).find(k => 
-              k.toLowerCase() === normalized.toLowerCase() ||
-              k.toLowerCase().includes(normalized.toLowerCase()) || 
-              normalized.toLowerCase().includes(k.toLowerCase())
-            );
-            if (scienceKey && setsDoneBeforeWorkout[scienceKey] !== undefined) {
-              setsDoneBeforeWorkout[scienceKey] += ex.sets.filter(s => s.done && !s.isDropset).length;
-            }
+          const foundEx = EXERCISES_DB.find(e => e.name === ex.name);
+          const muscle = foundEx ? foundEx.category : null;
+          if (muscle && setsDoneBeforeWorkout[muscle] !== undefined) {
+            setsDoneBeforeWorkout[muscle] += ex.sets.filter(s => s.done && !s.isDropset).length;
           }
         });
       }
     });
 
     const getTargetForMuscle = (muscle) => {
-      // Mapping from DB categories to Science Report landmarks (baseLandmarks keys)
+      // Mapping from DB categories to Science Report landmarks if needed
       const mapping = {
-        'Petto': 'Petto', 
-        'Dorso': 'Dorso', 
-        'Gambe': 'Quadricipiti', // Default fallback for generic legs
-        'Spalle': 'Spalle', 
-        'Bicipiti': 'Bicipiti', 
-        'Tricipiti': 'Tricipiti', 
-        'Addome': 'Addome', 
-        'Avambracci': 'Avambracci', 
-        'Collo': 'Collo'
+        'Petto': 'Petto', 'Dorso': 'Schiena', 'Gambe': 'Quadricipiti',
+        'Spalle': 'Spalle (Deltoidi)', 'Bicipiti': 'Bicipiti', 
+        'Tricipiti': 'Tricipiti', 'Addome': 'Addome', 'Avambracci': 'Avambracci', 'Collo': 'Collo'
       };
 
-      const scienceKey = mapping[muscle] || muscle;
+      const scienceKey = mapping[muscle];
       
       // Target dal Science Report (se disponibile e valido)
-      if (scienceReport && scienceReport.baseLandmarks[scienceKey]) {
+      if (scienceReport && scienceKey && scienceReport.baseLandmarks[scienceKey]) {
         const lm = scienceReport.baseLandmarks[scienceKey];
         if (currentMonth === 3 && (currentWeek === 9 || currentWeek === 10)) return Math.max(0, lm.mev - 2);
         

@@ -396,27 +396,12 @@ function Science() {
         return weight * (1 + reps / 30);
       };
 
-      // Keywords to identify main lifts even if custom named
-      const benchKeywords = ['panca piana', 'bench press', 'chest press', 'spinte piana'];
-      const squatKeywords = ['squat con bilanciere', 'squat', 'leg press', 'hack squat'];
-      const deadliftKeywords = ['stacchi da terra', 'deadlift', 'stacco', 'stacco rumeno'];
-
       history.forEach(workout => {
         workout.exercises.forEach(ex => {
           let type = '';
-          const nameLower = ex.name.toLowerCase();
-
-          // Priority 1: Exact matches or very close
-          if (nameLower === 'panca piana bilanciere') type = 'bench';
-          else if (nameLower === 'squat con bilanciere') type = 'squat';
-          else if (nameLower === 'stacchi da terra (deadlift)') type = 'deadlift';
-          
-          // Priority 2: Keyword search (if not already found)
-          if (!type) {
-            if (benchKeywords.some(k => nameLower.includes(k))) type = 'bench';
-            else if (squatKeywords.some(k => nameLower.includes(k))) type = 'squat';
-            else if (deadliftKeywords.some(k => nameLower.includes(k))) type = 'deadlift';
-          }
+          if (ex.name === 'Panca Piana Bilanciere') type = 'bench';
+          else if (ex.name === 'Squat con Bilanciere') type = 'squat';
+          else if (ex.name === 'Stacchi da Terra (Deadlift)') type = 'deadlift';
 
           if (type) {
             ex.sets.forEach(s => {

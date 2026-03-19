@@ -28,8 +28,7 @@ export const calculateLast7DaysVolume = (history, exercisesDb) => {
     if (ex.secondaryCategories) {
       allCats.push(...ex.secondaryCategories);
     }
-    // Store name in lowercase for case-insensitive matching
-    categoryMap[ex.name.toLowerCase().trim()] = allCats;
+    categoryMap[ex.name] = allCats;
   });
 
   // Filter last 7 days workouts
@@ -37,7 +36,7 @@ export const calculateLast7DaysVolume = (history, exercisesDb) => {
 
   recentWorkouts.forEach(workout => {
     workout.exercises.forEach(ex => {
-      const categories = categoryMap[ex.name.toLowerCase().trim()];
+      const categories = categoryMap[ex.name];
       if (categories) {
         // Count only completed sets, ignore dropsets for structural volume
         const completedSets = ex.sets.filter(s => s.done && !s.isDropset).length;
