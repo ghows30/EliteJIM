@@ -1,3 +1,5 @@
+import { normalizeName } from '../data/exercises';
+
 export const RANKS = [
   { level: 0, title: 'Rame III', minXp: 0, color: '#B87333' },
   { level: 1, title: 'Rame II', minXp: 1000, color: '#B87333' },
@@ -75,7 +77,9 @@ export const calculateSessionScore = (workout, pastHistory, exercisesDb = []) =>
     return { xp: 0, grade: 'D', setsPerHour: 0, breakdown: [], muscleXpGained: {} };
   }
 
-  const durationMs = workout.endTime - workout.startTime;
+  const start = Number(workout.startTime) || 0;
+  const end = Number(workout.endTime) || 0;
+  const durationMs = end - start;
   const durationHours = durationMs / (1000 * 60 * 60);
   
   let doneSets = 0;
@@ -84,6 +88,8 @@ export const calculateSessionScore = (workout, pastHistory, exercisesDb = []) =>
   // --- PASS 1: Determine which exercises achieved progressive overload ---
   const overloadedExercises = new Set();
   
+  if (!workout.exercises) return { xp: 0, grade: 'D', setsPerHour: 0, breakdown: [], muscleXpGained: {} };
+
   // Flatten exercisesDb and any others passed (like customExercises)
   const allKnownExercises = Array.isArray(exercisesDb) ? exercisesDb : [];
   
@@ -116,6 +122,7 @@ export const calculateSessionScore = (workout, pastHistory, exercisesDb = []) =>
 
   // --- PASS 2: Assign XP per set based on absolute tonnage ---
   workout.exercises.forEach(ex => {
+    console.log(`[DEBUG] Processing exercise in score: "${ex.name}"`);
     const categories = exerciseMetaMap[normalizeName(ex.name)] || [];
     const hadOverload = overloadedExercises.has(normalizeName(ex.name));
     
@@ -254,12 +261,14 @@ export const checkStreakInactivity = (lastWorkoutDateMs, currentStreak, xp) => {
 };
 
 export const recalculateTotalXpFromHistory = (history, exercisesDb = []) => {
-  if (!history || history.length === 0) {
-    return { userXP: 0, muscleXP: {}, currentStreak: 0, highestStreak: 0 };
-  }
+  console.log(`[DEBUG] recalculateTotalXpFromHistory started. History length: ${history?.length}`);
+  try {
+    if (!history || history.length === 0) {
+      return { userXP: 0, muscleXP: {}, currentStreak: 0, highestStreak: 0 };
+    }
 
   // Sort by date ascending to process oldest sessions first
-  const sortedHistory = [...history].sort((a, b) => a.startTime - b.startTime);
+  const sortedHistory = [...history].sort((a, b) => Number(a.startTime) - Number(b.startTime));
   
   let totalXP = 0;
   const totalMuscleXP = {};
@@ -273,7 +282,9 @@ export const recalculateTotalXpFromHistory = (history, exercisesDb = []) => {
   sortedHistory.forEach(workout => {
     // 1. Streak reset check
     if (lastWorkoutTime) {
-      const daysInactive = Math.floor((workout.startTime - lastWorkoutTime) / MS_PER_DAY);
+      const startT = Number(workout.startTime) || 0;
+      const lastT = Number(lastWorkoutTime) || 0;
+      const daysInactive = Math.floor((startT - lastT) / MS_PER_DAY);
       if (daysInactive >= 3) {
         currentStreak = 0;
       }
@@ -289,7 +300,7 @@ export const recalculateTotalXpFromHistory = (history, exercisesDb = []) => {
     }
     
     highestStreak = Math.max(highestStreak, currentStreak);
-    lastWorkoutTime = workout.startTime;
+    lastWorkoutTime = Number(workout.startTime) || 0;
 
     if (score.muscleXpGained) {
       Object.keys(score.muscleXpGained).forEach(muscle => {
@@ -301,10 +312,14 @@ export const recalculateTotalXpFromHistory = (history, exercisesDb = []) => {
     rollingHistory.push(workout);
   });
 
-  return {
-    userXP: totalXP,
-    muscleXP: totalMuscleXP,
-    currentStreak,
-    highestStreak
-  };
+    return {
+      userXP: totalXP,
+      muscleXP: totalMuscleXP,
+      currentStreak,
+      highestStreak
+    };
+  } catch (err) {
+    console.error("[CRITICAL ERROR] recalculateTotalXpFromHistory failed:", err);
+    throw err;
+  }
 };

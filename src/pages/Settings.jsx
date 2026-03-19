@@ -241,8 +241,13 @@ function Settings() {
             <button 
               className="btn-ghost" 
               onClick={() => {
-                syncGamificationWithHistory();
-                alert("Rank, Livelli e Streak sincronizzati con la cronologia!");
+                try {
+                  syncGamificationWithHistory();
+                  alert("Rank, Livelli e Streak sincronizzati con la cronologia!");
+                } catch (err) {
+                  console.error("Sync error:", err);
+                  alert("Errore durante la sincronizzazione: " + err.message);
+                }
               }}
               style={{ flex: 1, padding: '10px', borderRadius: '12px', fontSize: '0.8rem', border: '1px solid var(--primary-color)', color: 'var(--primary-color)', background: 'rgba(var(--primary-color-rgb), 0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
             >
