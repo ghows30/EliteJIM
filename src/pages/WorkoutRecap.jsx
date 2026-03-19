@@ -52,9 +52,12 @@ function WorkoutRecap() {
     }
 
     // 1. Trova i muscoli allenati in QUESTA sessione
+    const customExercises = useStore.getState().customExercises || [];
+    const allEx = [...EXERCISES_DB, ...customExercises];
+
     const setsDoneInWorkout = {};
     recapData.workout.exercises.forEach(ex => {
-      const foundEx = EXERCISES_DB.find(e => e.name === ex.name);
+      const foundEx = allEx.find(e => e.name === ex.name);
       const muscle = foundEx ? foundEx.category : null;
       if (muscle) {
         setsDoneInWorkout[muscle] = (setsDoneInWorkout[muscle] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
@@ -71,7 +74,7 @@ function WorkoutRecap() {
     history.forEach(w => {
       if (w.id !== recapData.workout.id && w.startTime >= startOfCurrentWeek) {
         w.exercises.forEach(ex => {
-          const foundEx = EXERCISES_DB.find(e => e.name === ex.name);
+          const foundEx = allEx.find(e => e.name === ex.name);
           const muscle = foundEx ? foundEx.category : null;
           if (muscle && setsDoneBeforeWorkout[muscle] !== undefined) {
             setsDoneBeforeWorkout[muscle] += ex.sets.filter(s => s.done && !s.isDropset).length;
@@ -81,17 +84,23 @@ function WorkoutRecap() {
     });
 
     const getTargetForMuscle = (muscle) => {
-      // Mapping from DB categories to Science Report landmarks if needed
+      // Mapping from DB categories to Science Report landmarks (baseLandmarks keys)
       const mapping = {
-        'Petto': 'Petto', 'Dorso': 'Schiena', 'Gambe': 'Quadricipiti',
-        'Spalle': 'Spalle (Deltoidi)', 'Bicipiti': 'Bicipiti', 
-        'Tricipiti': 'Tricipiti', 'Addome': 'Addome', 'Avambracci': 'Avambracci', 'Collo': 'Collo'
+        'Petto': 'Petto', 
+        'Dorso': 'Dorso', 
+        'Gambe': 'Quadricipiti', // Default fallback for generic legs
+        'Spalle': 'Spalle', 
+        'Bicipiti': 'Bicipiti', 
+        'Tricipiti': 'Tricipiti', 
+        'Addome': 'Addome', 
+        'Avambracci': 'Avambracci', 
+        'Collo': 'Collo'
       };
 
-      const scienceKey = mapping[muscle];
+      const scienceKey = mapping[muscle] || muscle;
       
       // Target dal Science Report (se disponibile e valido)
-      if (scienceReport && scienceKey && scienceReport.baseLandmarks[scienceKey]) {
+      if (scienceReport && scienceReport.baseLandmarks[scienceKey]) {
         const lm = scienceReport.baseLandmarks[scienceKey];
         if (currentMonth === 3 && (currentWeek === 9 || currentWeek === 10)) return Math.max(0, lm.mev - 2);
         

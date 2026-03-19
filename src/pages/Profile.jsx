@@ -100,7 +100,8 @@ function Profile() {
   // --- RP Volume Logic ---
   const rpVolumes = useMemo(() => {
     if (!history || history.length === 0) return null;
-    return calculateLast7DaysVolume(history, EXERCISES_DB);
+    const customExercises = useStore.getState().customExercises || [];
+    return calculateLast7DaysVolume(history, [...EXERCISES_DB, ...customExercises]);
   }, [history]);
 
   const welcomePhrase = useMemo(() => {
@@ -155,16 +156,23 @@ function Profile() {
     };
 
     // Gather sets done THIS week
+    const customExercises = useStore.getState().customExercises || [];
+    const allEx = [...EXERCISES_DB, ...customExercises];
+
     const setsDoneThisWeek = {};
     history.forEach(w => {
       if (w.startTime >= startOfCurrentWeek) {
         w.exercises.forEach(ex => {
-          const foundEx = EXERCISES_DB.find(e => e.name === ex.name);
+          const foundEx = allEx.find(e => e.name === ex.name);
           const muscles = foundEx ? getExerciseCategories(foundEx) : [];
           
           muscles.forEach(muscle => {
-            if (muscle && scienceReport.baseLandmarks[muscle]) {
-              setsDoneThisWeek[muscle] = (setsDoneThisWeek[muscle] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
+            // Map generic category names if necessary
+            const mapping = { 'Gambe': 'Quadricipiti' };
+            const scienceKey = mapping[muscle] || muscle;
+
+            if (scienceKey && scienceReport.baseLandmarks[scienceKey]) {
+              setsDoneThisWeek[scienceKey] = (setsDoneThisWeek[scienceKey] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
             }
           });
         });

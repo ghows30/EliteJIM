@@ -73,8 +73,52 @@ export const useStore = create(
       },
       syncGamificationWithHistory: () => {
         set((state) => {
-          const { userXP, muscleXP, currentStreak, highestStreak } = recalculateTotalXpFromHistory(state.history, [...EXERCISES_DB, ...(state.customExercises || [])]);
-          return { userXP, muscleXP, currentStreak, highestStreak };
+          // 1. Discover "lost" custom exercises from history
+          const allKnownNames = new Set([
+            ...EXERCISES_DB.map(e => e.name),
+            ...(state.customExercises || []).map(e => e.name)
+          ]);
+          
+          const newCustomExercises = [...(state.customExercises || [])];
+          let discoveredAny = false;
+
+          state.history.forEach(workout => {
+            workout.exercises.forEach(ex => {
+              if (ex.name && !allKnownNames.has(ex.name)) {
+                // Infer category if possible
+                let category = 'Altro';
+                const n = ex.name.toLowerCase();
+                if (n.includes('panca') || n.includes('petto') || n.includes('chest') || n.includes('spinte')) category = 'Petto';
+                else if (n.includes('rematore') || n.includes('trazioni') || n.includes('dorso') || n.includes('lat') || n.includes('pulley')) category = 'Dorso';
+                else if (n.includes('stacco') || n.includes('squat') || n.includes('gambe') || n.includes('pressa') || n.includes('leg')) category = 'Gambe';
+                else if (n.includes('spalle') || n.includes('military') || n.includes('alzate') || n.includes('deltoidi')) category = 'Spalle';
+                else if (n.includes('curl') || n.includes('bicipiti')) category = 'Bicipiti';
+                else if (n.includes('frenck') || n.includes('tricipiti') || n.includes('pushdown')) category = 'Tricipiti';
+                else if (n.includes('crunch') || n.includes('addome') || n.includes('plank')) category = 'Addome';
+
+                newCustomExercises.push({
+                  id: `custom-sync-${Date.now()}-${Math.random()}`,
+                  name: ex.name,
+                  category,
+                  isCustom: true
+                });
+                allKnownNames.add(ex.name);
+                discoveredAny = true;
+              }
+            });
+          });
+
+          // 2. Recalculate stats with the (potentially updated) list
+          const finalExercises = [...EXERCISES_DB, ...newCustomExercises];
+          const { userXP, muscleXP, currentStreak, highestStreak } = recalculateTotalXpFromHistory(state.history, finalExercises);
+          
+          return { 
+            customExercises: newCustomExercises,
+            userXP, 
+            muscleXP, 
+            currentStreak, 
+            highestStreak 
+          };
         });
       },
 
