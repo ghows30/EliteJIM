@@ -59,9 +59,17 @@ function WorkoutRecap() {
     recapData.workout.exercises.forEach(ex => {
       const searchName = (ex.name || "").toLowerCase().trim();
       const foundEx = allEx.find(e => e.name.toLowerCase().trim() === searchName);
-      const muscle = foundEx ? foundEx.category : null;
-      if (muscle) {
-        setsDoneInWorkout[muscle] = (setsDoneInWorkout[muscle] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
+      const muscleCat = foundEx ? foundEx.category : null;
+      if (muscleCat) {
+        let normalized = muscleCat === 'Gambe' ? 'Quadricipiti' : muscleCat;
+        const scienceKey = Object.keys(scienceGoalsThisWeek.setsDoneBeforeWorkout).find(k => 
+          k.toLowerCase() === normalized.toLowerCase() ||
+          k.toLowerCase().includes(normalized.toLowerCase()) || 
+          normalized.toLowerCase().includes(k.toLowerCase())
+        );
+        if (scienceKey) {
+          setsDoneInWorkout[scienceKey] = (setsDoneInWorkout[scienceKey] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
+        }
       }
     });
 
@@ -77,9 +85,17 @@ function WorkoutRecap() {
         w.exercises.forEach(ex => {
           const searchName = (ex.name || "").toLowerCase().trim();
           const foundEx = allEx.find(e => e.name.toLowerCase().trim() === searchName);
-          const muscle = foundEx ? foundEx.category : null;
-          if (muscle && setsDoneBeforeWorkout[muscle] !== undefined) {
-            setsDoneBeforeWorkout[muscle] += ex.sets.filter(s => s.done && !s.isDropset).length;
+          const muscleCat = foundEx ? foundEx.category : null;
+          if (muscleCat) {
+            let normalized = muscleCat === 'Gambe' ? 'Quadricipiti' : muscleCat;
+            const scienceKey = Object.keys(setsDoneBeforeWorkout).find(k => 
+              k.toLowerCase() === normalized.toLowerCase() ||
+              k.toLowerCase().includes(normalized.toLowerCase()) || 
+              normalized.toLowerCase().includes(k.toLowerCase())
+            );
+            if (scienceKey && setsDoneBeforeWorkout[scienceKey] !== undefined) {
+              setsDoneBeforeWorkout[scienceKey] += ex.sets.filter(s => s.done && !s.isDropset).length;
+            }
           }
         });
       }

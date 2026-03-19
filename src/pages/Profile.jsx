@@ -168,11 +168,18 @@ function Profile() {
           const muscles = foundEx ? getExerciseCategories(foundEx) : [];
           
           muscles.forEach(muscle => {
-            // Map generic category names if necessary
-            const mapping = { 'Gambe': 'Quadricipiti' };
-            const scienceKey = mapping[muscle] || muscle;
+            // Robust Science Key Matching
+            let normalized = muscle;
+            if (muscle === 'Gambe') normalized = 'Quadricipiti';
+            
+            const landmarks = scienceReport.baseLandmarks || {};
+            const scienceKey = Object.keys(landmarks).find(k => 
+                k.toLowerCase() === normalized.toLowerCase() ||
+                k.toLowerCase().includes(normalized.toLowerCase()) || 
+                normalized.toLowerCase().includes(k.toLowerCase())
+            );
 
-            if (scienceKey && scienceReport.baseLandmarks[scienceKey]) {
+            if (scienceKey) {
               setsDoneThisWeek[scienceKey] = (setsDoneThisWeek[scienceKey] || 0) + ex.sets.filter(s => s.done && !s.isDropset).length;
             }
           });
