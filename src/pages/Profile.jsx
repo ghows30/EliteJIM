@@ -128,7 +128,8 @@ function Profile() {
     const currentWeek = Math.min(Math.max(1, weeksElapsed + 1), 12);
 
     // Calculate start of THIS biological week
-    const startOfCurrentWeek = scienceReport.timestamp + (currentWeek - 1) * MS_PER_WEEK;
+    // Add 12-hour buffer (43200000 ms) so today's early workouts are included even if report was just made
+    const startOfCurrentWeek = (scienceReport.timestamp + (currentWeek - 1) * MS_PER_WEEK) - (12 * 60 * 60 * 1000);
 
     let currentMonth = 1;
     if (currentWeek > 4 && currentWeek <= 8) currentMonth = 2;
@@ -165,9 +166,10 @@ function Profile() {
           const normalizedExName = normalizeName(ex.name);
           let foundEx = allKnown.find(e => normalizeName(e.name) === normalizedExName);
           
-          let muscles = foundEx ? getExerciseCategories(foundEx) : [];
+          // Only use primary category for Science to avoid counting secondary groups
+          let muscles = foundEx?.category ? [foundEx.category] : [];
           
-          // Fuzzy fallback for Shoudlers & Abs
+          // Fuzzy fallback for Shoudlers, Abs & Back (Schiena)
           if (muscles.length === 0) {
             const fuzzyName = normalizedExName.toLowerCase();
             if (fuzzyName.includes('spalle') || fuzzyName.includes('shoulder') || fuzzyName.includes('military') || fuzzyName.includes('lento avanti')) {
@@ -176,6 +178,9 @@ function Profile() {
             } else if (fuzzyName.includes('addome') || fuzzyName.includes('core') || fuzzyName.includes('crunch') || fuzzyName.includes('addominali')) {
               muscles = ['Addome'];
               console.log(`[DEBUG_CORE] Fuzzy match for "${ex.name}" -> Addome`);
+            } else if (fuzzyName.includes('schiena') || fuzzyName.includes('back') || fuzzyName.includes('lat machine') || fuzzyName.includes('rematore')) {
+              muscles = ['Dorso'];
+              console.log(`[DEBUG_BACK] Fuzzy match for "${ex.name}" -> Dorso`);
             }
           }
 

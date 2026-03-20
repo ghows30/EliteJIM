@@ -132,6 +132,8 @@ export const calculateSessionScore = (workout, pastHistory, exercisesDb = []) =>
         categories.push('Spalle');
       } else if (fuzzyName.includes('addome') || fuzzyName.includes('core') || fuzzyName.includes('crunch') || fuzzyName.includes('addominali')) {
         categories.push('Addome');
+      } else if (fuzzyName.includes('schiena') || fuzzyName.includes('back') || fuzzyName.includes('lat machine') || fuzzyName.includes('rematore')) {
+        categories.push('Dorso');
       }
     }
 
