@@ -184,13 +184,34 @@ function Profile() {
             }
           }
 
+          // Map database categories to potential legacy keys in user's science report
+          const legacyMapping = {
+            'Dorso': 'Schiena',
+            'Spalle': 'Spalle (Deltoidi)',
+            'Gambe': 'Quadricipiti'
+          };
+
           muscles.forEach(muscle => {
-            if (muscle === 'Spalle') {
-              console.log(`[DEBUG_SHOULDERS] Counting: "${ex.name}", foundEx: ${foundEx?.name}, sets: ${ex.sets.length}`);
+            let targetKey = null;
+            
+            // 1. Check if the exact muscle exists in the report
+            if (scienceReport.baseLandmarks[muscle]) {
+              targetKey = muscle;
+            } 
+            // 2. Check if a legacy mapped muscle exists in the report
+            else if (legacyMapping[muscle] && scienceReport.baseLandmarks[legacyMapping[muscle]]) {
+              targetKey = legacyMapping[muscle];
+            } 
+            // 3. Fallbacks for reverse edge cases
+            else if (muscle === 'Schiena' && scienceReport.baseLandmarks['Dorso']) {
+              targetKey = 'Dorso';
+            } else if (muscle === 'Addominali' && scienceReport.baseLandmarks['Addome']) {
+              targetKey = 'Addome';
             }
-            if (muscle && scienceReport.baseLandmarks[muscle]) {
+
+            if (targetKey) {
               const count = ex.sets.filter(s => s.done && !s.isDropset).length;
-              setsDoneThisWeek[muscle] = (setsDoneThisWeek[muscle] || 0) + count;
+              setsDoneThisWeek[targetKey] = (setsDoneThisWeek[targetKey] || 0) + count;
             }
           });
         });

@@ -43,65 +43,7 @@ function Home() {
     navigate('/workout');
   };
 
-  // --- Weekly Tracker ---
-  const trackerData = useMemo(() => {
-    if (!scienceReport) return null;
-    const elapsedDays = (Date.now() - scienceReport.timestamp) / (1000 * 60 * 60 * 24);
-    const daysLeft = Math.max(0, 7 - (elapsedDays % 7));
-    const currentWeekNum = Math.min(Math.max(1, Math.floor(elapsedDays / 7) + 1), 12);
-    let currentMonth = 1;
-    if (currentWeekNum > 4 && currentWeekNum <= 8) currentMonth = 2;
-    if (currentWeekNum > 8) currentMonth = 3;
-
-    let targetSetsTotal = 0;
-    Object.keys(scienceReport.baseLandmarks).forEach(muscle => {
-      const lm = scienceReport.baseLandmarks[muscle];
-      let target;
-      if (currentMonth === 3 && (currentWeekNum === 9 || currentWeekNum === 10)) {
-        target = Math.max(0, lm.mev - 2);
-      } else {
-        const isFocus = (currentMonth === 1 && scienceReport.focus1.includes(muscle)) ||
-          (currentMonth === 2 && scienceReport.focus2.includes(muscle));
-        if (!isFocus) {
-          target = lm.mev;
-        } else {
-          const relativeWeek = currentWeekNum - ((currentMonth - 1) * 4);
-          const gap = lm.mrv - lm.mav;
-          target = Math.round(lm.mav + ((gap / 3) * (relativeWeek - 1)));
-        }
-      }
-      targetSetsTotal += target;
-    });
-
-    const exNameToSciMuscle = {};
-    EXERCISES_DB.forEach(ex => {
-      exNameToSciMuscle[ex.name] = ex.category === 'Gambe' ? '__LEG__' : ex.category;
-    });
-    const legMuscles = ['Quadricipiti', 'Femorali', 'Glutei', 'Polpacci'].filter(m => scienceReport.baseLandmarks[m]);
-    const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const donePerMuscle = {};
-    history.filter(w => w.startTime >= sevenDaysAgo).forEach(workout => {
-      workout.exercises.forEach(ex => {
-        const sciMuscle = exNameToSciMuscle[ex.name];
-        if (!sciMuscle) return;
-        const doneSets = ex.sets.filter(s => s.done && !s.isDropset).length;
-        if (sciMuscle === '__LEG__') {
-          const rep = legMuscles[0];
-          if (rep) donePerMuscle[rep] = (donePerMuscle[rep] || 0) + doneSets;
-        } else if (scienceReport.baseLandmarks[sciMuscle] !== undefined) {
-          donePerMuscle[sciMuscle] = (donePerMuscle[sciMuscle] || 0) + doneSets;
-        }
-      });
-    });
-
-    const doneSetsTotal = Object.values(donePerMuscle).reduce((a, v) => a + v, 0);
-    const missingSets = Math.max(0, targetSetsTotal - doneSetsTotal);
-    const percent = Math.min(100, Math.round((doneSetsTotal / targetSetsTotal) * 100)) || 0;
-
-    return { daysLeft: Math.ceil(daysLeft), missingSets, targetSetsTotal, doneSetsTotal, percent, currentWeekNum };
-  }, [scienceReport, history]);
-
-  const done = trackerData?.missingSets === 0;
+  // --- Weekly Tracker Decommissioned ---
 
   return (
     <>
@@ -154,53 +96,7 @@ function Home() {
           </div>
         )}
 
-        {/* ── TRACKER SETTIMANALE ──────────────────────── */}
-        {showScience && trackerData && (
-          <div className="glass" style={{
-            borderRadius: '24px', padding: '1.5rem',
-            marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.08)'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <div>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.7rem', fontWeight: '800', letterSpacing: '1px', margin: 0 }}>
-                  SETTIMANA {trackerData.currentWeekNum} · VOLUME
-                </p>
-                {done ? (
-                  <p style={{ color: '#34c759', fontWeight: '800', fontSize: '1.3rem', margin: '6px 0 0' }}>✅ Target Raggiunto!</p>
-                ) : (
-                  <p style={{ color: 'var(--text-main)', fontWeight: '800', fontSize: '1.2rem', margin: '6px 0 0' }}>
-                    <span style={{ color: 'var(--primary-color)', fontSize: '1.8rem' }}>{trackerData.missingSets}</span> serie mancanti
-                  </p>
-                )}
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{
-                  width: '64px', height: '64px', borderRadius: '50%',
-                  background: `conic-gradient(${done ? '#34c759' : 'var(--primary-color)'} ${trackerData.percent * 3.6}deg, rgba(255,255,255,0.06) 0deg)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                  <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: 'var(--surface-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontWeight: '900', fontSize: '0.9rem', color: done ? '#34c759' : '#fff' }}>{trackerData.percent}%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {!done && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ flex: 1, height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div style={{
-                    height: '100%', width: `${trackerData.percent}%`,
-                    background: 'var(--primary-color)',
-                    borderRadius: '4px', transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)'
-                  }} />
-                </div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700' }}>
-                  ⏳ {trackerData.daysLeft}g
-                </span>
-              </div>
-            )}
-          </div>
-        )}
+        {/* ── TRACKER SETTIMANALE DECOMMISSIONED ── */}
 
         {/* ── QUICK START ──────────────────────────────── */}
         <div style={{ marginBottom: '2rem' }}>
