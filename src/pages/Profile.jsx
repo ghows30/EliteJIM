@@ -414,11 +414,37 @@ function Profile() {
         {/* Science Mesocycle Sync Section */}
         {showScience && scienceGoals && (
           <div style={{ marginTop: '2rem' }}>
-            <div className="section-header" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Target size={24} color="var(--primary-color)" />
-              <h2 className="section-title-premium" style={{ margin: 0, color: isBossFight ? '#ff3b30' : 'var(--text-main)' }}>
-                Obiettivi W{scienceGoals.currentWeek} {isBossFight && "💀"}
-              </h2>
+            <div className="section-header" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Target size={24} color="var(--primary-color)" />
+                <h2 className="section-title-premium" style={{ margin: 0, color: isBossFight ? '#ff3b30' : 'var(--text-main)' }}>
+                  Obiettivi W{scienceGoals.currentWeek} {isBossFight && "💀"}
+                </h2>
+              </div>
+              
+              {scienceGoals.currentWeek < 12 && (
+                <button
+                  onClick={() => {
+                    if (window.confirm("Sei sicuro di voler terminare l'attuale settimana scientifica e passare alla successiva? L'azione è irreversibile.")) {
+                      useStore.getState().advanceScienceWeek();
+                    }
+                  }}
+                  style={{
+                    background: 'rgba(255,149,0,0.15)',
+                    color: '#ff9500',
+                    border: '1px solid rgba(255,149,0,0.3)',
+                    padding: '8px 14px',
+                    borderRadius: '12px',
+                    fontSize: '0.8rem',
+                    fontWeight: '800',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  Termina Sett.
+                </button>
+              )}
             </div>
 
             <div className="card glass" style={{ padding: '1.5rem', borderRadius: '24px', border: '1px solid var(--primary-color)' }}>

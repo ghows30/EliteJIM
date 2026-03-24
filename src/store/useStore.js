@@ -300,6 +300,26 @@ export const useStore = create(
         });
       },
 
+      advanceScienceWeek: () => set(state => {
+        if (!state.scienceReport) return state;
+        const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+        const now = Date.now();
+        const weeksElapsed = Math.floor((now - state.scienceReport.timestamp) / MS_PER_WEEK);
+        const currentWeek = Math.min(Math.max(1, weeksElapsed + 1), 12);
+        
+        if (currentWeek >= 12) return state; // Already at max week
+
+        // Shift the timestamp so that the NEXT week starts exactly today (with the 12h buffer in mind)
+        const newTimestamp = now - (currentWeek * MS_PER_WEEK);
+        
+        return {
+          scienceReport: {
+            ...state.scienceReport,
+            timestamp: newTimestamp
+          }
+        };
+      }),
+
       deleteSetFromActiveExercise: (exerciseId, setId) => {
         set((state) => {
           if (!state.activeWorkout) return state;
