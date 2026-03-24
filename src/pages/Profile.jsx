@@ -128,7 +128,8 @@ function Profile() {
     const currentWeek = Math.min(Math.max(1, weeksElapsed + 1), 12);
 
     // Calculate start of THIS biological week
-    const startOfCurrentWeek = scienceReport.timestamp + (currentWeek - 1) * MS_PER_WEEK;
+    // Add 12-hour buffer (43200000 ms) so today's early workouts are included even if report was just made
+    const startOfCurrentWeek = (scienceReport.timestamp + (currentWeek - 1) * MS_PER_WEEK) - (12 * 60 * 60 * 1000);
 
     let currentMonth = 1;
     if (currentWeek > 4 && currentWeek <= 8) currentMonth = 2;
@@ -165,9 +166,10 @@ function Profile() {
           const normalizedExName = normalizeName(ex.name);
           let foundEx = allKnown.find(e => normalizeName(e.name) === normalizedExName);
           
-          let muscles = foundEx ? getExerciseCategories(foundEx) : [];
+          // Only use primary category for Science to avoid counting secondary groups
+          let muscles = foundEx?.category ? [foundEx.category] : [];
           
-          // Fuzzy fallback for Shoudlers & Abs
+          // Fuzzy fallback for Shoudlers, Abs & Back (Schiena)
           if (muscles.length === 0) {
             const fuzzyName = normalizedExName.toLowerCase();
             if (fuzzyName.includes('spalle') || fuzzyName.includes('shoulder') || fuzzyName.includes('military') || fuzzyName.includes('lento avanti')) {
@@ -176,16 +178,40 @@ function Profile() {
             } else if (fuzzyName.includes('addome') || fuzzyName.includes('core') || fuzzyName.includes('crunch') || fuzzyName.includes('addominali')) {
               muscles = ['Addome'];
               console.log(`[DEBUG_CORE] Fuzzy match for "${ex.name}" -> Addome`);
+            } else if (fuzzyName.includes('schiena') || fuzzyName.includes('back') || fuzzyName.includes('lat machine') || fuzzyName.includes('rematore')) {
+              muscles = ['Dorso'];
+              console.log(`[DEBUG_BACK] Fuzzy match for "${ex.name}" -> Dorso`);
             }
           }
 
+          // Map database categories to potential legacy keys in user's science report
+          const legacyMapping = {
+            'Dorso': 'Schiena',
+            'Spalle': 'Spalle (Deltoidi)',
+            'Gambe': 'Quadricipiti'
+          };
+
           muscles.forEach(muscle => {
-            if (muscle === 'Spalle') {
-              console.log(`[DEBUG_SHOULDERS] Counting: "${ex.name}", foundEx: ${foundEx?.name}, sets: ${ex.sets.length}`);
+            let targetKey = null;
+            
+            // 1. Check if the exact muscle exists in the report
+            if (scienceReport.baseLandmarks[muscle]) {
+              targetKey = muscle;
+            } 
+            // 2. Check if a legacy mapped muscle exists in the report
+            else if (legacyMapping[muscle] && scienceReport.baseLandmarks[legacyMapping[muscle]]) {
+              targetKey = legacyMapping[muscle];
+            } 
+            // 3. Fallbacks for reverse edge cases
+            else if (muscle === 'Schiena' && scienceReport.baseLandmarks['Dorso']) {
+              targetKey = 'Dorso';
+            } else if (muscle === 'Addominali' && scienceReport.baseLandmarks['Addome']) {
+              targetKey = 'Addome';
             }
-            if (muscle && scienceReport.baseLandmarks[muscle]) {
+
+            if (targetKey) {
               const count = ex.sets.filter(s => s.done && !s.isDropset).length;
-              setsDoneThisWeek[muscle] = (setsDoneThisWeek[muscle] || 0) + count;
+              setsDoneThisWeek[targetKey] = (setsDoneThisWeek[targetKey] || 0) + count;
             }
           });
         });
@@ -388,11 +414,37 @@ function Profile() {
         {/* Science Mesocycle Sync Section */}
         {showScience && scienceGoals && (
           <div style={{ marginTop: '2rem' }}>
-            <div className="section-header" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Target size={24} color="var(--primary-color)" />
-              <h2 className="section-title-premium" style={{ margin: 0, color: isBossFight ? '#ff3b30' : 'var(--text-main)' }}>
-                Obiettivi W{scienceGoals.currentWeek} {isBossFight && "💀"}
-              </h2>
+            <div className="section-header" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Target size={24} color="var(--primary-color)" />
+                <h2 className="section-title-premium" style={{ margin: 0, color: isBossFight ? '#ff3b30' : 'var(--text-main)' }}>
+                  Obiettivi W{scienceGoals.currentWeek} {isBossFight && "💀"}
+                </h2>
+              </div>
+              
+              {scienceGoals.currentWeek < 12 && (
+                <button
+                  onClick={() => {
+                    if (window.confirm("Sei sicuro di voler terminare l'attuale settimana scientifica e passare alla successiva? L'azione è irreversibile.")) {
+                      useStore.getState().advanceScienceWeek();
+                    }
+                  }}
+                  style={{
+                    background: 'rgba(255,149,0,0.15)',
+                    color: '#ff9500',
+                    border: '1px solid rgba(255,149,0,0.3)',
+                    padding: '8px 14px',
+                    borderRadius: '12px',
+                    fontSize: '0.8rem',
+                    fontWeight: '800',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  Termina Sett.
+                </button>
+              )}
             </div>
 
             <div className="card glass" style={{ padding: '1.5rem', borderRadius: '24px', border: '1px solid var(--primary-color)' }}>
