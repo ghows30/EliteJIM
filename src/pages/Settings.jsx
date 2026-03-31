@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { ArrowLeft, ChevronRight, Dumbbell, Dna, Info, Download, Upload, Zap } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Dumbbell, Dna, Info, Download, Upload, Zap, BookOpen } from 'lucide-react';
 import { EXERCISES_DB } from '../data/exercises';
 import { recalculateTotalXpFromHistory } from '../utils/gamification';
 import './Settings.css';
@@ -10,6 +10,8 @@ function Settings() {
   const navigate = useNavigate();
   const showScience = useStore(state => state.showScience);
   const toggleScience = useStore(state => state.toggleScience);
+  const showDiary = useStore(state => state.showDiary);
+  const toggleDiary = useStore(state => state.toggleDiary);
   const syncGamificationWithHistory = useStore(state => state.syncGamificationWithHistory);
   const fileInputRef = React.useRef(null);
 
@@ -190,6 +192,43 @@ function Settings() {
                 width: '22px', height: '22px', background: '#fff',
                 borderRadius: '50%', position: 'absolute', top: '3px',
                 left: showScience ? '25px' : '3px',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }} />
+            </div>
+          </div>
+
+          <div 
+            className="settings-item" 
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '1.25rem', background: 'rgba(255,255,255,0.03)',
+              borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)',
+              marginBottom: '1rem'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ background: 'rgba(238, 191, 0, 0.1)', padding: '8px', borderRadius: '10px' }}>
+                <BookOpen size={20} color="#eebf00" />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontWeight: '700', color: '#fff' }}>Sezione Note</p>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Abilita o disabilita il diario degli allenamenti.</p>
+              </div>
+            </div>
+            <div 
+              onClick={toggleDiary}
+              style={{
+                width: '50px', height: '28px', 
+                background: showDiary ? 'var(--primary-color)' : 'rgba(255,255,255,0.1)',
+                borderRadius: '20px', position: 'relative', cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+            >
+              <div style={{
+                width: '22px', height: '22px', background: '#fff',
+                borderRadius: '50%', position: 'absolute', top: '3px',
+                left: showDiary ? '25px' : '3px',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
               }} />

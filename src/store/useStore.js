@@ -49,6 +49,8 @@ export const useStore = create(
       scienceReport: null,
       // Persistent rest timer end timestamp
       globalRestEndTime: null,
+      // Freeform workout notes (Diario)
+      workoutNotes: [],
 
       // --- Gamification State ---
       userXP: 0,
@@ -58,6 +60,7 @@ export const useStore = create(
       lastWorkoutDate: null,
       recapData: null,
       showScience: true,
+      showDiary: true,
 
       // --- Gamification Actions ---
       clearRecapData: () => set({ recapData: null }),
@@ -85,6 +88,7 @@ export const useStore = create(
       // --- Science Actions ---
       saveScienceReport: (report) => set({ scienceReport: report }),
       toggleScience: () => set((state) => ({ showScience: !state.showScience })),
+      toggleDiary: () => set((state) => ({ showDiary: !state.showDiary })),
       
       // --- Custom Exercises Actions ---
       addCustomExercise: (exercise) =>
@@ -337,7 +341,21 @@ export const useStore = create(
             }
           };
         });
-      }
+      },
+
+      // --- Workout Notes Actions (Diario) ---
+      addWorkoutNote: (note) =>
+        set((state) => ({ workoutNotes: [note, ...(state.workoutNotes || [])] })),
+      updateWorkoutNote: (id, updatedNote) =>
+        set((state) => ({
+          workoutNotes: (state.workoutNotes || []).map((n) =>
+            n.id === id ? { ...n, ...updatedNote, updatedAt: Date.now() } : n
+          ),
+        })),
+      deleteWorkoutNote: (id) =>
+        set((state) => ({
+          workoutNotes: (state.workoutNotes || []).filter((n) => n.id !== id),
+        }))
     }),
     {
       name: 'elitejim-storage', // unique name

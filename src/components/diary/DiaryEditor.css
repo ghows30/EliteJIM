@@ -1,0 +1,216 @@
+.diary-editor-fullscreen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: -webkit-fill-available;
+  background-color: var(--bg-color, #0a0a0a);
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  overflow: hidden;
+}
+
+.editor-topbar-blur {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.editor-back-action {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--primary-color, #eebf00);
+  font-size: 1.15rem;
+  padding: 8px 0;
+  margin-left: -8px;
+  cursor: pointer;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+
+.editor-fixed-bottom-bar {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2.5rem);
+  max-width: 440px;
+  background: rgba(15, 25, 35, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem 0.5rem;
+  z-index: 1000;
+  border-radius: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(255,255,255,0.05) inset;
+}
+
+.editor-tool-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.editor-tool-btn.tool-active {
+  color: var(--primary-color, #eebf00);
+  background: rgba(255, 255, 255, 0.08); /* Fondo molto delicato */
+  box-shadow: none;
+  transform: scale(1.05);
+}
+
+.editor-tool-btn:active {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.editor-tool-btn.tool-active:active {
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.0);
+}
+
+.diary-editor-title-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.04em;
+  padding: 0;
+  margin-bottom: 24px;
+  outline: none;
+}
+
+.diary-editor-title-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.editor-content-scroll {
+  flex: 1;
+  padding: 16px 20px 80px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: var(--bg-color, #0a0a0a);
+}
+
+/* Tiptap Premium Typography */
+.premium-tiptap-editor {
+  outline: none;
+  min-height: 80vh;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: -0.01em;
+}
+
+.premium-tiptap-editor p {
+  margin: 0.6em 0;
+}
+
+.premium-tiptap-editor h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+  color: #fff;
+}
+
+.premium-tiptap-editor strong {
+  font-weight: 700;
+  color: #fff;
+}
+
+.premium-tiptap-editor p.is-editor-empty:first-child::before {
+  color: rgba(255, 255, 255, 0.3);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Task List Styling */
+.premium-tiptap-editor ul[data-type="taskList"] {
+  list-style: none;
+  padding: 0;
+}
+
+.premium-tiptap-editor ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.premium-tiptap-editor ul[data-type="taskList"] li > label {
+  margin-right: 12px;
+  margin-top: 4px;
+  user-select: none;
+}
+
+.premium-tiptap-editor ul[data-type="taskList"] input[type="checkbox"] {
+  width: 1.3em;
+  height: 1.3em;
+  accent-color: var(--primary-color, #eebf00);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+}
+
+.premium-tiptap-editor ul[data-type="taskList"] input[type="checkbox"]:checked {
+  background-color: var(--primary-color, #eebf00);
+  border-color: var(--primary-color, #eebf00);
+}
+
+.premium-tiptap-editor ul[data-type="taskList"] input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

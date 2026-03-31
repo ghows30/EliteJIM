@@ -1,0 +1,144 @@
+/* Gli stili generali ora usano .app-header e .app-main da App.css */
+
+/* Empty State Modern */
+.diary-empty-state-modern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.diary-empty-state-modern p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 8px 0;
+}
+
+.diary-empty-sub {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Native List - ora convertita a "Premium Cards" */
+.diary-native-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 16px;
+}
+
+.diary-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+
+.diary-list-item:active {
+  background-color: rgba(255, 255, 255, 0.07);
+  transform: scale(0.98);
+}
+
+.diary-item-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.diary-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.diary-item-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.diary-item-subtext {
+  font-size: 0.95rem;
+  display: flex;
+  gap: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.diary-item-date {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.diary-item-preview {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.diary-item-reveal-actions {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+}
+
+.diary-pin-action, .diary-trash-action {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.diary-pin-action:active {
+  background: rgba(238, 191, 0, 0.15);
+  transform: scale(0.9);
+}
+
+.diary-trash-action {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.diary-trash-action:hover, .diary-trash-action:active {
+  color: #ff3b30;
+  background: rgba(255, 59, 48, 0.1);
+}
+
+/* Animations */
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
